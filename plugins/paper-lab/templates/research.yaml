@@ -1,0 +1,14 @@
+# .paper-lab/research.yaml — 研究ディレクトリのルートに置く設定
+# paper-lab の全スキルがこれを起点に動く。claim は必ず埋めること。
+
+research:
+  title: ""            # 研究テーマ(仮でよい)
+  claim: ""            # ★一言主張。「本研究は〜により〜を示す」。全ノートの位置づけ軸
+  keywords: []         # 検索・タグの語彙(例: [continual learning, catastrophic forgetting])
+
+lang: ja               # ノート・ドラフトの言語 (ja / en)
+format: latex          # 原稿形式 (latex / markdown)
+
+# パスは research.yaml からの相対
+bib: papers/refs.bib
+notes_dir: papers/notes

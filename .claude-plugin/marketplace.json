@@ -18,6 +18,11 @@
       "name": "work-slides",
       "source": "./plugins/work-slides",
       "description": "ビジネススライド生成システム。結論ファースト構成・会社テンプレパック(転職対応)・編集可能pptx出力。"
+    },
+    {
+      "name": "paper-lab",
+      "source": "./plugins/paper-lab",
+      "description": "論文調査・原稿作成システム。論文ノートの蓄積 → 関連研究章・原稿ドラフト・査読者視点レビューへ蒸留。修論対応。"
     }
   ]
 }
