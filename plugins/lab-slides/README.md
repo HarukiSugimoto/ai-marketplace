@@ -9,9 +9,10 @@
 
 必要なもの: Node.js(Marp CLI は npx 経由で自動取得されるのでインストール不要)。
 
+### A. 使うだけ(消費側 / どのマシンでも)
+
 ```
-/plugin marketplace add /Users/harusugi/Desktop/個人開発/ai-marketplace
-   (GitHub に push 済みなら URL でも可)
+/plugin marketplace add <owner>/ai-marketplace     # GitHub。ローカルパスでも可
 /plugin install lab-slides@ai-marketplace
 ```
 
@@ -20,6 +21,29 @@
 ```bash
 <plugin>/scripts/build.sh <plugin>/catalog/demo.md html && open <plugin>/catalog/demo.html
 ```
+
+### B. カタログを育てる側(昇格側 / repo を clone するマシン)
+
+`/catalog-add` で型や共通画像を repo に昇格させたいマシンでは、追加で一度だけ:
+
+```bash
+git clone <ai-marketplace の URL>            # 好きな場所に clone
+bash <clone先>/plugins/lab-slides/scripts/promote.sh init   # このマシン用に config を自動生成
+```
+
+`init` は clone 内の自分の位置から repo を検出し、
+`~/.config/lab-slides/config.json` にこのマシンの clone パスを書く。
+以後 `/catalog-add`(プラグイン層)がこの repo を編集できるようになる。
+
+## マシンを乗り換えたとき
+
+`~/.config/lab-slides/config.json` は**マシン固有**(clone パスをハードコード)なので、
+新しいPCにはそのまま持ち込めない。壊れたら/新PCでは上の **B の2コマンド**をやり直すだけ。
+
+- clone 先パスが変わっても `init` が正しく書き直す(手編集不要)
+- リポジトリを clone しないマシンは config 不要 = 消費専用(`/plugin update` で受け取る)
+- 昇格しようとして config が無い/パスが古い場合、`promote.sh` は
+  `init` を実行するよう案内して安全に停止する(誤ってキャッシュを編集しない)
 
 ## クイックスタート: 進捗報告を作る
 
