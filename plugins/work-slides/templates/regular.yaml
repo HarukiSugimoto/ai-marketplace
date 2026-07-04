@@ -1,0 +1,54 @@
+# 定例会議資料テンプレート
+# 毎週・隔週の定例向けの軽量資料。前回からの差分と論点に絞る。
+
+name: regular
+display_name: 定例会議資料
+default_duration_min: 15
+slide_budget_per_min: [0.5, 0.7]   # 定例は1枚あたりの滞在が長い(議論するため)
+
+brief_required:
+  - audience: 定例の参加者(チーム内 / 顧客同席 など)
+  - topics: 今回扱う議題(前回の宿題を必ず含める)
+
+# 2回目以降は前回の deck.json(.work-slides/outlines/ に保存)を読み、
+# 「前回からの差分」と「前回のアクション消化状況」を自動で埋める
+recurring: true
+
+sections:
+  - id: title
+    layout: title
+    required: true
+    guide: タイトルは「○○定例 第N回」+ 日付。to は不要なことが多い。
+
+  - id: agenda
+    title: 本日の議題
+    layout: agenda
+    required: true
+
+  - id: recap
+    title: 前回のアクション確認
+    layout: table
+    required: true
+    guide: |
+      前回の next-action をそのまま持ってきて消化状況を付ける
+      (担当 / アクション / 期限 / 状況)。未消化は理由を口頭で補足。
+
+  - id: topics
+    title: 各議題
+    layout: [body, table, two-col, kpi, problem-solution]
+    required: true
+    repeat: true   # 議題の数だけ繰り返す
+    guide: |
+      議題1つ = 1〜2枚。共有だけの議題は table/body で薄く、
+      議論したい議題は「論点 + 選択肢 + 推し案」の形にして時間を割く。
+
+  - id: closing
+    title: 次のアクション
+    layout: next-action
+    required: true
+    guide: この場で決まった担当・期限をその場で確定させる(持ち帰らない)。
+
+time_allocation:
+  recap: 0.10
+  topics: 0.75
+  closing: 0.15

@@ -1,0 +1,66 @@
+# 報告書・進捗報告テンプレート
+# 状況を伝え、必要なら判断を仰ぐ資料。「結論(順調/遅延)→ 詳細」の順で。
+
+name: report
+display_name: 報告書・進捗報告
+default_duration_min: 10
+slide_budget_per_min: [0.8, 1.0]
+
+brief_required:
+  - audience: 誰への報告か(上長・関係部署・顧客)
+  - status: 一言でいうと順調か、遅延か、問題ありか(exec-summary の ask になる)
+  - decision: 相手に判断してほしいことはあるか(無ければ「報告のみ」と明示)
+
+sections:
+  - id: title
+    layout: title
+    required: true
+
+  - id: summary
+    title: サマリ
+    layout: exec-summary
+    required: true
+    guide: |
+      ask は「結論 + 判断してほしいこと」。例「進捗は計画比1週遅れ。
+      リカバリ案Bの承認をお願いしたい」。判断不要なら「順調。共有のみ」。
+
+  - id: progress
+    title: 進捗状況
+    layout: [table, body]
+    required: true
+    guide: |
+      計画と実績の対比を table で(項目 / 計画 / 実績 / 状況)。
+      状況は ○△× など一目で分かる記号を使う。
+
+  - id: results
+    title: 成果・実績
+    layout: [kpi, two-col, table]
+    required: false
+    guide: 数値で示せる成果があれば kpi で大書き。無ければセクションごと省略。
+
+  - id: issues
+    title: 課題とリスク
+    layout: [problem-solution, body]
+    required: true
+    guide: |
+      課題は「事実 → 影響 → 対策(案)」の順で。対策まで書いてから報告するのが原則。
+      判断を仰ぐ課題は対策を複数案(compare)にして推し案を示す。
+
+  - id: plan
+    title: 今後の予定
+    layout: [roadmap, body]
+    required: true
+
+  - id: closing
+    title: 次のアクション
+    layout: next-action
+    required: true
+    guide: 判断してほしいことがあれば actions の先頭に相手の行動として書く。
+
+time_allocation:
+  summary: 0.15
+  progress: 0.25
+  results: 0.15
+  issues: 0.25
+  plan: 0.10
+  closing: 0.10

@@ -1,0 +1,81 @@
+# 提案書・企画書テンプレート
+# 相手に何かを「決めさせる」資料。結論ファーストが最重要。
+
+name: proposal
+display_name: 提案書・企画書
+default_duration_min: 15
+
+# 枚数の目安: 説明時間(分) × 0.8〜1.0 枚(表紙除く)。持ち回り資料なら 10〜15枚を上限に
+slide_budget_per_min: [0.8, 1.0]
+
+# brief(Step 1)で必ず埋める項目。ここが曖昧なまま作り始めない
+brief_required:
+  - audience: 誰に見せるか(役職・関心事。例 部長/コスト重視)
+  - decision: この資料で何を決めさせたいか(1文。exec-summary の ask になる)
+  - objections: 想定される反論・懸念(最低2つ。本文で先回りして潰す)
+  - deadline: いつまでに決めてほしいか
+
+sections:
+  - id: title
+    layout: title
+    required: true
+
+  - id: summary
+    title: エグゼクティブサマリ
+    layout: exec-summary
+    required: true
+    guide: |
+      brief の decision を ask に。points は「効果・リスク・体制(または費用)」の
+      3点構成が基本。忙しい決裁者はこの1枚しか読まない前提で書く。
+
+  - id: agenda
+    title: 本日の内容
+    layout: agenda
+    required: false
+    guide: 5枚以下の短い提案では省略してよい。
+
+  - id: problem
+    title: 現状の課題
+    layout: [problem-solution, body]
+    required: true
+    guide: |
+      相手が既に痛みを感じている課題から入る。数値で示せる課題を優先
+      (「月80時間」のように)。problem-solution なら解決の方向性まで1枚で。
+
+  - id: proposal
+    title: ご提案内容
+    layout: [body, two-col, compare]
+    required: true
+    guide: |
+      提案の中身。複数案あるなら compare で並べ、推す案に recommended。
+      brief の objections への回答をこのセクションに織り込む
+      (「リスクが心配 → 試験導入だから解約自由」のように)。
+
+  - id: effect
+    title: 導入効果
+    layout: [kpi, table]
+    required: true
+    guide: 効果は数値で。kpi で大書きし、根拠の計算は table か補足に。
+
+  - id: plan
+    title: スケジュールと費用
+    layout: [roadmap, table]
+    required: true
+    guide: roadmap でフェーズを、table で費用内訳を。金額は必ず総額を見出しに。
+
+  - id: closing
+    title: まとめ
+    layout: next-action
+    required: true
+    guide: |
+      actions の1行目は必ず「相手にお願いすること + 期限(brief の deadline)」。
+      message はリスクの低さ・始めやすさを1文で。
+
+# 時間配分の目安(説明時間に対する比率)
+time_allocation:
+  summary: 0.15
+  problem: 0.20
+  proposal: 0.35
+  effect: 0.15
+  plan: 0.10
+  closing: 0.05

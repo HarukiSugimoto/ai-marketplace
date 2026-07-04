@@ -1,0 +1,44 @@
+# 議事録ベース資料テンプレート
+# 会議メモ・録音書き起こしから、関係者へ共有する清書資料を起こす。
+
+name: minutes
+display_name: 議事録ベース資料
+default_duration_min: 5          # 読み物想定(発表しないことが多い)
+slide_budget_per_min: [1.0, 1.5]
+
+brief_required:
+  - audience: 誰に共有するか(出席者のみ / 欠席者含む / 上長報告)
+  - source: 元になる会議メモ・録音書き起こしの場所
+
+sections:
+  - id: title
+    layout: title
+    required: true
+    guide: タイトルは「○○会議 議事要旨」+ 開催日。meta に出席者。
+
+  - id: summary
+    title: 決定事項
+    layout: exec-summary
+    required: true
+    guide: |
+      ask ではなく「この会議で決まったこと」を1文で。points に主要な決定を最大3点。
+      決定が無かった会議なら「継続審議。論点は下記3点に整理」のように書く。
+
+  - id: discussion
+    title: 議論の経緯
+    layout: [table, body]
+    required: true
+    guide: |
+      table(論点 / 議論の要旨 / 結論)で構造化する。発言の逐語ではなく論点単位。
+      結論が出なかった論点は「継続」と明記し、誰がボールを持つかを書く。
+
+  - id: closing
+    title: 次のアクション
+    layout: next-action
+    required: true
+    guide: 会議中に出た宿題を漏らさず。期限が曖昧なものは「期限未定」と正直に書く。
+
+time_allocation:
+  summary: 0.30
+  discussion: 0.50
+  closing: 0.20
