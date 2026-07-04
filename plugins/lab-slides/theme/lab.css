@@ -1,7 +1,9 @@
 /* @theme lab */
 /*
  * lab-slides 正式テーマ(Academic Ink)— 生成り紙 × 明朝見出し × 深紅
- * 前半: デザイントークン(色・余白・書体)— 値の変更はここだけで行う
+ * 色・書体トークン(--c-*, --font-*)は theme/tokens.json が真実。
+ *   build.sh が _tokens.css を自動生成して先に読むので、ここでは定義しない。
+ *   値を変えるときは tokens.json を編集(CSS プレビューと pptx 本番の両方に効く)。
  * 後半: レイアウトカタログの実装 — /catalog-add で育てる
  *
  * 章表示: 各章の最初のスライドで <!-- header: 章名 --> を設定すると
@@ -11,16 +13,6 @@
 @import 'default';
 
 :root {
-  --c-bg: #faf7f1;
-  --c-text: #24211c;
-  --c-muted: #8c8577;
-  --c-accent: #8e2f3c;          /* 深紅 */
-  --c-accent-soft: #f4e8e6;
-  --c-panel: #f1ece1;
-  --c-line: #ddd5c6;
-  --font-serif: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
-  --font-body: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
-
   font-family: var(--font-body);
   font-size: 23px;
   line-height: 1.75;

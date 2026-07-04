@@ -1,3 +1,8 @@
 *.html
+*.pptx
+~$*
 .lab-theme-merged.css
+plugins/lab-slides/theme/_tokens.css
+plugins/lab-slides/node_modules/
+plugins/lab-slides/catalog/demo_deck.md
 .DS_Store

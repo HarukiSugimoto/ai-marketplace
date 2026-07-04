@@ -1,120 +1,67 @@
 # レイアウトカタログ — /catalog-add で育てる
 #
+# deck.json が唯一の真実。スライド生成では各スライドをここの deck 例に従った
+# オブジェクトで表現する。それを2つのレンダラーが消費する:
+#   render-marp.js → Marp/HTML(高速プレビュー)   render-pptx.js → 編集可能pptx(図形保持)
+# 新レイアウトを足すときは、この deck スキーマ・lab.css のクラス・render-pptx.js の
+# 図形レシピ・render-marp.js の分岐の4点をそろえる(/catalog-add が案内する)。
+#
 # 各エントリ:
-#   id:       レイアウト名(theme/lab.css のクラスと対応)
-#   category: structure(構造) / explain(説明) / compare(比較) / result(結果) / lab(研究特有)
-#   when:     いつ使うか(スライド生成時の選定基準。具体的に書く)
-#   snippet:  Marp Markdown の雛形
+#   id / category / when(いつ使うか。生成時の選定基準)
+#   deck: そのレイアウトが deck.json で取るフィールド(例)
 
 layouts:
   - id: title
     category: structure
     when: 表紙。発表タイトル・発表者・日付・発表の場。
-    snippet: |
-      <!-- _class: title -->
-      # 発表タイトル
-      <div class="meta">杉本 悠生 ・ 2026-07-04 ・ 進捗報告</div>
+    deck: '{ "layout": "title", "title": "発表タイトル", "meta": "氏名 ・ 日付 ・ 発表の場" }'
 
   - id: toc
     category: structure
-    when: 目次。表紙の直後に置く(学会・修論は必須、進捗報告は省略可)。現在章を強調して章扉代わりに再掲してもよい(その場合は現在章を **太字** にする)。
-    snippet: |
-      <!-- _class: toc -->
-      # 目次
-      1. 背景・課題
-      2. 提案手法
-      3. 実験
-      4. まとめ
+    when: 目次。表紙直後(学会・修論は必須、進捗報告は省略可)。current で現在章を強調。
+    deck: '{ "layout": "toc", "title": "目次", "items": ["背景", "提案手法", "実験", "まとめ"], "current": 1 }'
 
   - id: section
     category: structure
-    when: 章の切り替わり。学会発表など10枚超のときのみ使う。進捗報告では省く。章の最初のスライドで header を設定すると、以降のスライド上部に現在章が固定表示される。
-    snippet: |
-      <!-- _class: section -->
-      <!-- header: 提案手法 -->
-      # 提案手法
+    when: 章の切り替わり。10枚超のときのみ。以降のスライドは header に同じ章名を入れて上部固定表示。
+    deck: '{ "layout": "section", "title": "提案手法" }'
 
   - id: plain
     category: explain
-    when: 既定。見出し+箇条書き(最大5項目)。迷ったらこれ。1枚1メッセージ。
-    snippet: |
-      ## 見出し(このスライドの主張を文で書く)
-      - 根拠1
-      - 根拠2
+    when: 既定。見出し(主張文)+ 箇条書き(最大5)。迷ったらこれ。1枚1メッセージ。
+    deck: '{ "layout": "plain", "header": "章名", "headline": "このスライドの主張を文で", "bullets": ["根拠1", "根拠2"] }'
 
   - id: two-col
     category: explain
-    when: 図と説明を並べる。図を左・説明を右。図が主役なら w64 で左を広く。
-    snippet: |
-      ## 見出し
-      <div class="cols w64">
-      <div>
-
-      ![](figures/arch.png)
-
-      </div>
-      <div>
-
-      - 図のポイント1
-      - 図のポイント2
-
-      </div>
-      </div>
+    when: 図と説明を並べる。left に図・right に説明。図が主役なら wide:true で左を広く。
+    deck: '{ "layout": "two-col", "header": "章名", "headline": "見出し", "wide": true, "left": { "image": "figures/arch.png" }, "right": { "bullets": ["ポイント1", "ポイント2"] } }'
 
   - id: compare
     category: compare
-    when: ベースライン vs 提案、Before/After。左=従来(グレー)、右=提案(オレンジ)。
-    snippet: |
-      <!-- _class: compare -->
-      ## ベースライン vs 提案手法
-      <div class="cols">
-      <div class="col baseline">
-
-      ### 従来手法
-      - 特徴・数値
-
-      </div>
-      <div class="col proposed">
-
-      ### 提案手法
-      - 特徴・**改善数値**
-
-      </div>
-      </div>
+    when: ベースライン vs 提案、Before/After。baseline=従来(グレー)、proposed=提案(深紅)。
+    deck: '{ "layout": "compare", "header": "章名", "headline": "見出し", "baseline": { "title": "従来手法", "bullets": ["特徴・数値"] }, "proposed": { "title": "提案手法", "bullets": ["改善数値"] } }'
 
   - id: figure-full
     category: result
-    when: 結果グラフ・アーキテクチャ全体図など、図そのものを見せたいとき。文字は最小限。
-    snippet: |
-      <!-- _class: figure-full -->
-      ## 主結果: 提案手法が全条件でベースラインを上回る
-      ![](figures/result_main.png)
-      <div class="caption">図1: ○○データセットでの精度比較(n=5, 平均±標準偏差)</div>
+    when: 結果グラフ・アーキ全体図など図そのものを見せる。文字は最小限。見出しは主張文。
+    deck: '{ "layout": "figure-full", "header": "章名", "headline": "提案手法が全条件で上回る", "image": "figures/result.png", "caption": "図1: …(n=5, 平均±標準偏差)" }'
 
   - id: metrics
     category: result
     when: 重要な数値を2〜4個だけ大書きして印象付ける。詳細な表は別スライドへ。
-    snippet: |
-      ## 結果サマリ
-      <div class="metrics">
-      <div class="metric"><div class="value">-64%</div><div class="label">推論レイテンシ</div></div>
-      <div class="metric"><div class="value">+0.8</div><div class="label">BLEU</div></div>
-      </div>
+    deck: '{ "layout": "metrics", "header": "章名", "headline": "結果サマリ", "metrics": [{ "value": "-64%", "label": "推論レイテンシ" }, { "value": "+0.8", "label": "BLEU" }] }'
 
   - id: discussion
     category: lab
-    when: 進捗報告の「議論したい点・詰まっている点」。背景色で目立たせ、質問を明確な問いの形で書く。
-    snippet: |
-      <!-- _class: discussion -->
-      # 議論したいこと
-      1. ○○の評価指標は△△で妥当か?
-      2. 実験規模を広げる前に□□を検証すべきか?
+    when: 進捗報告の「議論したい点・詰まっている点」。質問を明確な問いの形で書く。
+    deck: '{ "layout": "discussion", "header": "章名", "title": "議論したいこと", "items": ["○○の指標は妥当か?", "□□を先に検証すべきか?"] }'
 
   - id: takeaway
     category: structure
-    when: まとめスライドの最後、または各章の締め。持ち帰ってほしい1文を強調枠で。
-    snippet: |
-      ## まとめ
-      - 要点1
-      - 要点2
-      <div class="takeaway">提案手法は精度を保ったまま推論を64%高速化する</div>
+    when: まとめスライド。要点の箇条書き + 持ち帰ってほしい1文を message に。
+    deck: '{ "layout": "takeaway", "header": "章名", "headline": "まとめ", "bullets": ["要点1", "要点2"], "message": "提案手法は精度を保ったまま推論を64%高速化する" }'
+
+# 数式・複雑な図の扱い:
+#   PowerPoint の図形では数式・込み入った図は表現できないため、画像として貼る
+#   (figure-full / two-col の image に PNG を指定)。この画像部分は pptx では編集不可。
+#   数式が主役のスライドは figure-full に数式画像を置く運用。

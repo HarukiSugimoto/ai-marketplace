@@ -1,0 +1,27 @@
+{
+  "meta": { "title": "lab-slides レイアウトカタログ デモ", "type": "conference" },
+  "slides": [
+    { "layout": "title", "title": "lab-slides レイアウトカタログ デモ", "meta": "Haruki Sugimoto ・ ai-marketplace / lab-slides v0.1.0" },
+    { "layout": "toc", "title": "目次", "items": ["説明レイアウト", "比較・結果レイアウト", "研究特有レイアウト"], "current": 1 },
+    { "layout": "section", "title": "説明レイアウト" },
+    { "layout": "plain", "header": "説明レイアウト", "headline": "plain: 既定レイアウト(1枚1メッセージ)",
+      "bullets": ["見出しは体言止めでなく主張文で書く", "箇条書きは最大5項目", "上部に現在章が固定表示される(章ヘッダー)"] },
+    { "layout": "two-col", "header": "説明レイアウト", "headline": "two-col: 図と説明を並べる", "wide": true,
+      "left": { "image": "nonexistent.png" },
+      "right": { "bullets": ["図が主役なら wide で左を広く", "説明は短く、詳細は口頭で"] } },
+    { "layout": "section", "title": "比較・結果レイアウト" },
+    { "layout": "compare", "header": "比較・結果レイアウト", "headline": "compare: ベースライン vs 提案手法",
+      "baseline": { "title": "Transformer (baseline)", "bullets": ["推論: 120ms/token", "BLEU: 27.3"] },
+      "proposed": { "title": "提案手法", "bullets": ["推論: 43ms/token", "BLEU: 28.1"] } },
+    { "layout": "figure-full", "header": "比較・結果レイアウト", "headline": "figure-full: 提案手法が全条件でベースラインを上回る",
+      "image": "nonexistent.png", "caption": "図1: ○○データセットでの精度比較(n=5, 平均±標準偏差)" },
+    { "layout": "metrics", "header": "比較・結果レイアウト", "headline": "metrics: 数値の大書き",
+      "metrics": [ { "value": "-64%", "label": "推論レイテンシ" }, { "value": "+0.8", "label": "BLEU" }, { "value": "×1/3", "label": "パラメータ数" } ] },
+    { "layout": "section", "title": "研究特有レイアウト" },
+    { "layout": "discussion", "header": "研究特有レイアウト", "title": "議論したいこと",
+      "items": ["○○の評価指標は△△で妥当か?", "実験規模を広げる前に□□を検証すべきか?"] },
+    { "layout": "takeaway", "header": "研究特有レイアウト", "headline": "まとめ",
+      "bullets": ["段階生成(内容→デザインの2関門)で手戻りを最小化", "レイアウトは使うたびに /catalog-add で資産化"],
+      "message": "スライドシステムは「作る」ものではなく「育てる」もの" }
+  ]
+}

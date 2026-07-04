@@ -1,0 +1,13 @@
+{
+  "name": "lab-slides",
+  "version": "0.1.0",
+  "private": true,
+  "description": "lab-slides の pptx ネイティブレンダラー(PptxGenJS)",
+  "type": "commonjs",
+  "scripts": {
+    "render": "node scripts/render-pptx.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}
