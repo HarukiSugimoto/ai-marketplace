@@ -7,7 +7,8 @@
 
 ## セットアップ
 
-必要なもの: Node.js(Marp CLI は npx 経由で自動取得されるのでインストール不要)。
+必要なもの: Node.js のみ。Marp CLI は npx 経由、pptx 用の pptxgenjs は初回ビルド時に
+build.sh が自動 `npm install` する(手動セットアップ不要)。
 
 ### A. 使うだけ(消費側 / どのマシンでも)
 
