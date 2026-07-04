@@ -70,9 +70,11 @@ Claude Code 内で:
 
 ## プラグインを育てるサイクル
 
-1. 使っていて「この型いいな」と思ったら `/catalog-add`(汎用ならプラグイン層、PJ 固有ならプロジェクト層へ)
-2. この repo に commit & push
-3. 他のマシンでは `/plugin update lab-slides`
+1. 使っていて「この型いいな」と思ったら `/catalog-add`(汎用ならプラグイン層、現場固有なら会社層・現場層へ)
+2. この repo に commit & push(各プラグインの `promote.sh commit` が代行)
+3. 他のマシンでは `/plugin update <プラグイン名>`
+
+work-slides は転職時に `/company-add` で会社パックを追加する(テンプレ pptx があれば配色を自動取り込み)。
 
 ## 関連リポジトリ
 

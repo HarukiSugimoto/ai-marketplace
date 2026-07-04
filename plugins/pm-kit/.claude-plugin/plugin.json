@@ -1,0 +1,10 @@
+{
+  "name": "pm-kit",
+  "version": "0.1.0",
+  "description": "議事録・意思決定ログシステム。雑メモから議事録+アクションアイテムを抽出し、決定事項をADR風に記録、未消化アイテムから次回アジェンダを起案する。会社パック対応。",
+  "author": {
+    "name": "Haruki Sugimoto",
+    "email": "sugisugiharu@gmail.com"
+  },
+  "license": "MIT"
+}

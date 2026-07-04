@@ -13,11 +13,14 @@ companies/<会社id>/
 
 ## 新しい会社を追加する
 
+`/company-add` skill が一連の手順を案内する。手動なら:
+
 ```bash
-scripts/promote.sh company <会社id>     # _example を複製して雛形を作る
+scripts/promote.sh company <会社id>                        # _example を複製して雛形を作る
+node scripts/ingest-template.js <会社テンプレ.pptx> <会社id>  # 指定pptxがあれば配色・書体を自動抽出
 ```
 
-その後 `tokens.json`(配色)と `rules.yaml`(規定)を会社に合わせて編集し、
+その後 `tokens.json`(配色。ingest 済みなら目視確認のみ)と `rules.yaml`(規定)を会社に合わせて編集し、
 **職場ディレクトリ**の `.work-slides/workspace.yaml` に1行書けば有効化:
 
 ```yaml

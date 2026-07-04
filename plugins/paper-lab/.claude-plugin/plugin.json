@@ -1,0 +1,10 @@
+{
+  "name": "paper-lab",
+  "version": "0.1.0",
+  "description": "論文調査・原稿作成システム。論文を構造化ノートとして蓄積し、関連研究章・原稿ドラフト・推敲へ蒸留する。修論/学会原稿対応。",
+  "author": {
+    "name": "Haruki Sugimoto",
+    "email": "sugisugiharu@gmail.com"
+  },
+  "license": "MIT"
+}

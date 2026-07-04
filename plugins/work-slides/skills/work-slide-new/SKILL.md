@@ -20,8 +20,8 @@ description: ビジネススライド(提案書・報告書・定例資料・議
      会社パックは未設定でも既定テーマで動きます」と確認して雛形を作る
 3. **文書タイプの確定**: proposal / report / regular / minutes から選ぶ(会話から自明なら確認だけ)。
    テンプレを読む: `${CLAUDE_PLUGIN_ROOT}/templates/<タイプ>.yaml`
-4. regular(定例)の2回目以降は、案件の `.work-slides/outlines/` から前回の deck.json を
-   読み、前回の next-action を recap セクションに自動転記する。
+4. regular(定例)の2回目以降は、同じ案件フォルダの `slides/` 配下にある前回
+   (最新日付)の deck.json を読み、前回の next-action を recap セクションに自動転記する。
 
 ## Step 1: brief の確定(研究スライドとの最大の違い)
 
@@ -32,7 +32,8 @@ description: ビジネススライド(提案書・報告書・定例資料・議
 - **objections**: 想定される反論・懸念(本文で先回りして潰す)
 
 会話と素材から推定できる項目は推定で埋めて確認だけ取る。
-結果を `<案件>/slides/work/<日付>_<タイプ>/brief.yaml` に書く。
+結果を `<案件>/slides/<日付>_<タイプ>/brief.yaml` に書く
+(以降の中間物・成果物もすべてこのフォルダに置く)。
 
 ## Step 2: 構成設計 → outline.yaml(★関門1: ストーリーレビュー)
 
@@ -86,6 +87,6 @@ ${CLAUDE_PLUGIN_ROOT}/scripts/build.sh <deck.json> pptx   # ★本番: 図形・
 ${CLAUDE_PLUGIN_ROOT}/scripts/build.sh <deck.json> pdf    # 共有用 PDF が要る場合
 ```
 
-完了時、brief.yaml / outline.yaml / deck.json を案件の `.work-slides/outlines/` 相当
-(職場ルートではなく**案件ディレクトリ側** `<案件>/slides/` に残す)にコピーし、
-定例なら次回の recap 用になることを伝える。
+brief.yaml / outline.yaml / deck.json は `<案件>/slides/<日付>_<タイプ>/` にそのまま残る
+(deck.json が資産。html / pptx は何度でも再生成できる派生物)。
+定例なら、この deck.json が次回の recap の入力になることを伝える。

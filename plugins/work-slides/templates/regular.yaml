@@ -10,7 +10,7 @@ brief_required:
   - audience: 定例の参加者(チーム内 / 顧客同席 など)
   - topics: 今回扱う議題(前回の宿題を必ず含める)
 
-# 2回目以降は前回の deck.json(.work-slides/outlines/ に保存)を読み、
+# 2回目以降は、同じ案件フォルダの slides/ に残る前回(最新日付)の deck.json を読み、
 # 「前回からの差分」と「前回のアクション消化状況」を自動で埋める
 recurring: true
 
