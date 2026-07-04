@@ -1,0 +1,163 @@
+/* @theme lab */
+/* 案3: Bold Graphic — ダークネイビー × シアン。コントラストと大きい数字で押す */
+
+@import 'default';
+
+:root {
+  --c-dark: #0d1526;
+  --c-bg: #ffffff;
+  --c-text: #131a2b;
+  --c-muted: #7c86a0;
+  --c-accent: #06b6d4;          /* シアン */
+  --c-accent2: #7c3aed;         /* バイオレット(グラデ用) */
+  --c-accent-soft: #e6fbff;
+  --c-panel: #f2f5fa;
+  --c-line: #e3e8f2;
+  --grad: linear-gradient(90deg, var(--c-accent), var(--c-accent2));
+  --font-body: 'Hiragino Sans', 'Noto Sans JP', 'Helvetica Neue', sans-serif;
+
+  font-family: var(--font-body);
+  font-size: 23px;
+  line-height: 1.68;
+  letter-spacing: 0.015em;
+  color: var(--c-text);
+  background: var(--c-bg);
+  padding: 58px 74px 54px;
+}
+
+/* ---- 基本要素 ---- */
+h1, h2 { font-weight: 800; line-height: 1.35; letter-spacing: 0.005em; }
+h2 { font-size: 1.6em; margin: 0 0 0.7em; }
+h2::before {
+  content: '';
+  display: block;
+  width: 56px; height: 7px;
+  border-radius: 4px;
+  background: var(--grad);
+  margin-bottom: 18px;
+}
+h3 { font-size: 1.02em; font-weight: 800; }
+strong {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 800;
+}
+ul li, ol li { margin: 0.35em 0; }
+ul li::marker { color: var(--c-accent); }
+code { background: var(--c-panel); border-radius: 6px; padding: 0.05em 0.4em; font-size: 0.9em; }
+table { font-size: 0.82em; border-collapse: collapse; margin: 1em auto; }
+th { background: var(--c-dark); color: #fff; font-weight: 700; }
+td { border-bottom: 1px solid var(--c-line); }
+blockquote { border-left: 5px solid var(--c-accent); color: var(--c-muted); padding-left: 1em; }
+img { display: block; margin: 0.8em auto; max-height: 60%; border-radius: 12px; }
+section::after { color: var(--c-muted); font-size: 0.55em; font-weight: 700; }
+footer { color: var(--c-muted); font-size: 0.5em; letter-spacing: 0.08em; }
+
+/* ---- title: 表紙(ダーク) ---- */
+section.title { justify-content: center; background: var(--c-dark); color: #fff; padding: 0 96px; }
+section.title h1 { font-size: 2.5em; font-weight: 800; line-height: 1.3; color: #fff; border: none; }
+section.title h1::before {
+  content: '';
+  display: block;
+  width: 80px; height: 9px;
+  border-radius: 5px;
+  background: var(--grad);
+  margin-bottom: 30px;
+}
+section.title .meta { color: rgba(255,255,255,0.55); font-size: 0.85em; margin-top: 40px; letter-spacing: 0.06em; }
+section.title::after { color: rgba(255,255,255,0.35); }
+
+/* ---- section: 章扉(ダーク) ---- */
+section.section { justify-content: center; background: var(--c-dark); color: #fff; padding: 0 96px; }
+section.section h1 { font-size: 2.1em; font-weight: 800; color: #fff; border: none; }
+section.section h1::before {
+  content: '';
+  display: block;
+  width: 60px; height: 8px;
+  border-radius: 4px;
+  background: var(--grad);
+  margin-bottom: 24px;
+}
+section.section::after { color: rgba(255,255,255,0.35); }
+
+/* ---- two-col ---- */
+section .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: center; }
+section .cols.w64 { grid-template-columns: 6fr 4fr; }
+
+/* ---- compare ---- */
+section.compare .cols { align-items: stretch; gap: 26px; }
+section.compare .col { border-radius: 18px; padding: 26px 32px; }
+section.compare .col.baseline { background: var(--c-panel); color: var(--c-muted); }
+section.compare .col.baseline h3 { color: var(--c-muted); }
+section.compare .col.proposed { background: var(--c-dark); color: #fff; box-shadow: 0 14px 34px rgba(13, 21, 38, 0.28); }
+section.compare .col.proposed h3 { color: var(--c-accent); }
+section.compare .col.proposed strong { -webkit-background-clip: initial; background: none; color: var(--c-accent); }
+
+/* ---- figure-full ---- */
+section.figure-full { text-align: center; }
+section.figure-full h2 { text-align: left; }
+section.figure-full img { max-height: 68%; box-shadow: 0 12px 32px rgba(13, 21, 38, 0.12); }
+section.figure-full .caption { color: var(--c-muted); font-size: 0.65em; margin-top: 0.6em; }
+
+/* ---- metrics ---- */
+section .metrics { display: flex; gap: 26px; justify-content: center; margin-top: 38px; }
+section .metric {
+  flex: 1;
+  background: var(--c-dark);
+  border-radius: 18px;
+  padding: 30px 24px;
+  text-align: center;
+}
+section .metric .value {
+  font-size: 2.7em; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.1;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-variant-numeric: tabular-nums;
+}
+section .metric .label { color: rgba(255,255,255,0.55); font-size: 0.62em; font-weight: 700; margin-top: 10px; letter-spacing: 0.08em; }
+
+/* ---- discussion ---- */
+section.discussion h1 { font-size: 1.65em; border: none; }
+section.discussion h1::before {
+  content: 'DISCUSSION';
+  display: block;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  width: fit-content; height: auto;
+  font-size: 0.5em; font-weight: 800; letter-spacing: 0.24em;
+  margin-bottom: 14px;
+}
+section.discussion ol li {
+  background: var(--c-panel);
+  border-radius: 14px;
+  padding: 16px 22px;
+  margin: 14px 0;
+  list-style-position: inside;
+  font-weight: 700;
+}
+
+/* ---- takeaway ---- */
+section .takeaway {
+  background: var(--c-dark);
+  color: #fff;
+  border-radius: 16px;
+  padding: 22px 30px;
+  font-weight: 800;
+  font-size: 1.05em;
+  margin-top: 36px;
+}
+section .takeaway::before {
+  content: 'TAKEAWAY';
+  display: block;
+  color: var(--c-accent);
+  font-size: 0.55em;
+  letter-spacing: 0.24em;
+  margin-bottom: 6px;
+}

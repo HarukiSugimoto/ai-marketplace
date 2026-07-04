@@ -1,0 +1,50 @@
+# 進捗報告テンプレート
+# ※ 仮組み。研究室の実際の進捗報告の構成・持ち時間に合わせて要調整。
+
+name: progress
+display_name: 進捗報告
+default_duration_min: 10
+
+# 枚数逆算: 持ち時間(分) × 0.8〜1.0 枚を上限とする(表紙除く)
+slide_budget_per_min: [0.8, 1.0]
+
+sections:
+  - id: title
+    layout: title
+    required: true
+
+  - id: recap
+    title: 前回までの状況
+    layout: plain
+    required: true
+    guide: |
+      前回の outline(プロジェクト層 .lab-slides/outlines/ の最新)があれば
+      その「今後の予定」「議論したい点」から自動で埋める。1枚以内。
+
+  - id: done
+    title: 今回やったこと
+    layout: plain
+    required: true
+    guide: 事実ベースで簡潔に。詳細は結果スライドに譲る。
+
+  - id: results
+    title: 結果
+    layout: [figure-full, two-col, compare, metrics]
+    required: true
+    guide: |
+      図・表が主役。figures.yaml に登録された図を優先して使う。
+      1枚1メッセージ。見出しは「〜した」ではなく主張文で書く。
+
+  - id: discussion
+    title: 議論したいこと
+    layout: discussion
+    required: true
+    guide: |
+      進捗報告で一番大事なスライド。詰まっている点・判断を仰ぎたい点を
+      明確な問いの形(「〜は妥当か?」)で1〜3個。
+
+  - id: next
+    title: 今後の予定
+    layout: plain
+    required: true
+    guide: 次回報告までの具体的なタスク。次回の recap の種になる。

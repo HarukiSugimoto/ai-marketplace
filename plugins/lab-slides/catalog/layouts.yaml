@@ -1,0 +1,120 @@
+# レイアウトカタログ — /catalog-add で育てる
+#
+# 各エントリ:
+#   id:       レイアウト名(theme/lab.css のクラスと対応)
+#   category: structure(構造) / explain(説明) / compare(比較) / result(結果) / lab(研究特有)
+#   when:     いつ使うか(スライド生成時の選定基準。具体的に書く)
+#   snippet:  Marp Markdown の雛形
+
+layouts:
+  - id: title
+    category: structure
+    when: 表紙。発表タイトル・発表者・日付・発表の場。
+    snippet: |
+      <!-- _class: title -->
+      # 発表タイトル
+      <div class="meta">杉本 悠生 ・ 2026-07-04 ・ 進捗報告</div>
+
+  - id: toc
+    category: structure
+    when: 目次。表紙の直後に置く(学会・修論は必須、進捗報告は省略可)。現在章を強調して章扉代わりに再掲してもよい(その場合は現在章を **太字** にする)。
+    snippet: |
+      <!-- _class: toc -->
+      # 目次
+      1. 背景・課題
+      2. 提案手法
+      3. 実験
+      4. まとめ
+
+  - id: section
+    category: structure
+    when: 章の切り替わり。学会発表など10枚超のときのみ使う。進捗報告では省く。章の最初のスライドで header を設定すると、以降のスライド上部に現在章が固定表示される。
+    snippet: |
+      <!-- _class: section -->
+      <!-- header: 提案手法 -->
+      # 提案手法
+
+  - id: plain
+    category: explain
+    when: 既定。見出し+箇条書き(最大5項目)。迷ったらこれ。1枚1メッセージ。
+    snippet: |
+      ## 見出し(このスライドの主張を文で書く)
+      - 根拠1
+      - 根拠2
+
+  - id: two-col
+    category: explain
+    when: 図と説明を並べる。図を左・説明を右。図が主役なら w64 で左を広く。
+    snippet: |
+      ## 見出し
+      <div class="cols w64">
+      <div>
+
+      ![](figures/arch.png)
+
+      </div>
+      <div>
+
+      - 図のポイント1
+      - 図のポイント2
+
+      </div>
+      </div>
+
+  - id: compare
+    category: compare
+    when: ベースライン vs 提案、Before/After。左=従来(グレー)、右=提案(オレンジ)。
+    snippet: |
+      <!-- _class: compare -->
+      ## ベースライン vs 提案手法
+      <div class="cols">
+      <div class="col baseline">
+
+      ### 従来手法
+      - 特徴・数値
+
+      </div>
+      <div class="col proposed">
+
+      ### 提案手法
+      - 特徴・**改善数値**
+
+      </div>
+      </div>
+
+  - id: figure-full
+    category: result
+    when: 結果グラフ・アーキテクチャ全体図など、図そのものを見せたいとき。文字は最小限。
+    snippet: |
+      <!-- _class: figure-full -->
+      ## 主結果: 提案手法が全条件でベースラインを上回る
+      ![](figures/result_main.png)
+      <div class="caption">図1: ○○データセットでの精度比較(n=5, 平均±標準偏差)</div>
+
+  - id: metrics
+    category: result
+    when: 重要な数値を2〜4個だけ大書きして印象付ける。詳細な表は別スライドへ。
+    snippet: |
+      ## 結果サマリ
+      <div class="metrics">
+      <div class="metric"><div class="value">-64%</div><div class="label">推論レイテンシ</div></div>
+      <div class="metric"><div class="value">+0.8</div><div class="label">BLEU</div></div>
+      </div>
+
+  - id: discussion
+    category: lab
+    when: 進捗報告の「議論したい点・詰まっている点」。背景色で目立たせ、質問を明確な問いの形で書く。
+    snippet: |
+      <!-- _class: discussion -->
+      # 議論したいこと
+      1. ○○の評価指標は△△で妥当か?
+      2. 実験規模を広げる前に□□を検証すべきか?
+
+  - id: takeaway
+    category: structure
+    when: まとめスライドの最後、または各章の締め。持ち帰ってほしい1文を強調枠で。
+    snippet: |
+      ## まとめ
+      - 要点1
+      - 要点2
+      <div class="takeaway">提案手法は精度を保ったまま推論を64%高速化する</div>

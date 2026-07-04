@@ -1,0 +1,203 @@
+/* @theme lab */
+/*
+ * lab-slides 正式テーマ(Academic Ink)— 生成り紙 × 明朝見出し × 深紅
+ * 前半: デザイントークン(色・余白・書体)— 値の変更はここだけで行う
+ * 後半: レイアウトカタログの実装 — /catalog-add で育てる
+ *
+ * 章表示: 各章の最初のスライドで <!-- header: 章名 --> を設定すると
+ *         以降のスライド上部に現在章が固定表示される(変更するまで持続)
+ */
+
+@import 'default';
+
+:root {
+  --c-bg: #faf7f1;
+  --c-text: #24211c;
+  --c-muted: #8c8577;
+  --c-accent: #8e2f3c;          /* 深紅 */
+  --c-accent-soft: #f4e8e6;
+  --c-panel: #f1ece1;
+  --c-line: #ddd5c6;
+  --font-serif: 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif JP', serif;
+  --font-body: 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+
+  font-family: var(--font-body);
+  font-size: 23px;
+  line-height: 1.75;
+  letter-spacing: 0.02em;
+  color: var(--c-text);
+  background: var(--c-bg);
+  padding: 64px 78px 54px;
+}
+
+/* 本文スライドは上揃え(内容量でタイトル位置が動かないように) */
+section { justify-content: flex-start; }
+
+/* ---- 章ヘッダー(上部固定)---- */
+header {
+  position: absolute;
+  top: 22px;
+  right: 78px;
+  color: var(--c-muted);
+  font-family: var(--font-serif);
+  font-size: 0.55em;
+  letter-spacing: 0.18em;
+}
+header::before {
+  content: '';
+  display: inline-block;
+  width: 9px; height: 9px;
+  background: var(--c-accent);
+  margin-right: 10px;
+  vertical-align: baseline;
+}
+
+/* ---- 基本要素 ---- */
+h1, h2 { font-family: var(--font-serif); font-weight: 600; letter-spacing: 0.04em; }
+h2 {
+  font-size: 1.55em;
+  margin: 0 0 0.8em;
+  padding-bottom: 0.35em;
+  border-bottom: 1px solid var(--c-line);
+}
+h2::after {
+  content: '';
+  display: block;
+  width: 88px; height: 3px;
+  background: var(--c-accent);
+  margin-top: calc(0.35em + 1px);
+  margin-bottom: -2px;
+}
+h3 { font-family: var(--font-serif); font-size: 1.05em; font-weight: 600; }
+strong { color: var(--c-accent); }
+ul li, ol li { margin: 0.35em 0; }
+ul li::marker { color: var(--c-accent); }
+code { background: var(--c-panel); border-radius: 4px; padding: 0.05em 0.4em; font-size: 0.9em; }
+table { font-size: 0.82em; border-collapse: collapse; margin: 1em auto; }
+th { background: none; color: var(--c-text); font-weight: 600; border-top: 2px solid var(--c-text); border-bottom: 1px solid var(--c-text); }
+td { border-bottom: 1px solid var(--c-line); }
+blockquote { border-left: 3px solid var(--c-accent); color: var(--c-muted); padding-left: 1em; font-family: var(--font-serif); }
+img { display: block; margin: 0.8em auto; max-height: 60%; }
+section::after { color: var(--c-muted); font-size: 0.55em; font-family: var(--font-serif); }
+footer { color: var(--c-muted); font-size: 0.5em; letter-spacing: 0.1em; }
+
+/* ==== レイアウトカタログ実装 ==== */
+
+/* ---- title: 表紙 ---- */
+section.title { justify-content: center; text-align: center; padding: 0 90px; }
+section.title h1 {
+  font-size: 2.2em; font-weight: 600; line-height: 1.45;
+  border: none; letter-spacing: 0.06em;
+}
+section.title h1::after {
+  content: '';
+  display: block;
+  width: 72px; height: 3px;
+  background: var(--c-accent);
+  margin: 30px auto 0;
+}
+section.title .meta { color: var(--c-muted); font-size: 0.8em; margin-top: 36px; letter-spacing: 0.12em; }
+
+/* ---- toc: 目次 ---- */
+section.toc { justify-content: center; }
+section.toc h1 {
+  font-size: 1.5em; text-align: center; border: none; letter-spacing: 0.3em;
+  margin-bottom: 1.2em;
+}
+section.toc ol {
+  list-style: none;
+  counter-reset: toc;
+  margin: 0 auto;
+  padding: 0;
+  width: 72%;
+}
+section.toc ol li {
+  counter-increment: toc;
+  display: flex;
+  align-items: baseline;
+  gap: 22px;
+  padding: 13px 6px;
+  margin: 0;
+  border-bottom: 1px dotted var(--c-line);
+  font-family: var(--font-serif);
+  font-size: 1.08em;
+  letter-spacing: 0.08em;
+}
+section.toc ol li::before {
+  content: counter(toc, decimal-leading-zero);
+  color: var(--c-accent);
+  font-size: 0.85em;
+  font-weight: 600;
+}
+/* 現在章の強調(章扉代わりに再掲する場合は **章名** と書く) */
+section.toc ol li strong { color: var(--c-accent); font-weight: 600; }
+
+/* ---- section: 章扉 ---- */
+section.section { justify-content: center; text-align: center; background: var(--c-bg); }
+section.section h1 {
+  font-size: 1.9em; font-weight: 600; color: var(--c-text);
+  border: none; letter-spacing: 0.1em;
+}
+section.section h1::before { content: '— '; color: var(--c-accent); }
+section.section h1::after { content: ' —'; color: var(--c-accent); }
+
+/* ---- two-col ---- */
+section .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: center; }
+section .cols.w64 { grid-template-columns: 6fr 4fr; }
+
+/* ---- compare ---- */
+section.compare .cols { align-items: stretch; gap: 26px; }
+section.compare .col { border-radius: 6px; padding: 24px 30px; border: 1px solid var(--c-line); }
+section.compare .col.baseline { background: var(--c-panel); }
+section.compare .col.baseline h3 { color: var(--c-muted); }
+section.compare .col.proposed { background: var(--c-accent-soft); border: 1px solid var(--c-accent); }
+section.compare .col.proposed h3 { color: var(--c-accent); }
+
+/* ---- figure-full ---- */
+section.figure-full { text-align: center; }
+section.figure-full h2 { text-align: left; }
+section.figure-full img { max-height: 68%; border: 1px solid var(--c-line); }
+section.figure-full .caption { color: var(--c-muted); font-size: 0.65em; margin-top: 0.6em; font-family: var(--font-serif); }
+
+/* ---- metrics ---- */
+section .metrics { display: flex; gap: 26px; justify-content: center; margin-top: 38px; }
+section .metric {
+  flex: 1;
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-top: 3px solid var(--c-accent);
+  border-radius: 6px;
+  padding: 28px 22px;
+  text-align: center;
+}
+section .metric .value {
+  font-family: var(--font-serif);
+  font-size: 2.5em; font-weight: 600; line-height: 1.1;
+  color: var(--c-accent);
+  font-variant-numeric: tabular-nums;
+}
+section .metric .label { color: var(--c-muted); font-size: 0.62em; margin-top: 10px; letter-spacing: 0.1em; }
+
+/* ---- discussion ---- */
+section.discussion { background: var(--c-panel); }
+section.discussion h1 { font-size: 1.6em; border: none; color: var(--c-accent); }
+section.discussion ol li {
+  background: var(--c-bg);
+  border-left: 3px solid var(--c-accent);
+  padding: 14px 22px;
+  margin: 14px 0;
+  list-style-position: inside;
+}
+
+/* ---- takeaway ---- */
+section .takeaway {
+  background: var(--c-bg);
+  border: 1px solid var(--c-accent);
+  border-left: 6px solid var(--c-accent);
+  border-radius: 6px;
+  padding: 20px 28px;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 1.05em;
+  margin-top: 34px;
+}

@@ -1,0 +1,73 @@
+# 学会発表・修論発表テンプレート
+# ※ 仮組み。発表先(国内研究会 / 国際会議 / 修論審査)に応じて調整。
+
+name: conference
+display_name: 学会・修論発表
+default_duration_min: 15
+
+# 枚数逆算: 発表時間(分) × 0.8〜0.9 枚(表紙・予備スライド除く)
+slide_budget_per_min: [0.8, 0.9]
+
+# このテンプレでは発表台本(スライドごとの読み上げ原稿 + 時間配分)も生成する
+generate_script: true
+backup_slides: true   # 質疑用の予備スライド(詳細実験条件・追加結果)を末尾に
+
+sections:
+  - id: title
+    layout: title
+    required: true
+
+  - id: agenda
+    title: 目次
+    layout: toc
+    required: true
+    guide: |
+      章立てを提示する。以降、各章の最初のスライドに
+      <!-- header: 章名 --> を置き、現在章を上部に固定表示する。
+
+  - id: background
+    title: 背景・課題
+    layout: plain
+    required: true
+    guide: |
+      聴衆が非専門でも「何が問題か」が分かるように。
+      課題は1文の主張に絞り、最後のスライドまで一貫させる。
+
+  - id: related
+    title: 関連研究
+    layout: [plain, compare]
+    required: true
+    guide: 網羅ではなく「既存法の限界 → だから本研究」という橋渡しとして書く。
+
+  - id: proposal
+    title: 提案手法
+    layout: [two-col, figure-full]
+    required: true
+    guide: 全体像の図を1枚目に。新規性のある部分を色・強調で示す。
+
+  - id: experiment
+    title: 実験設定
+    layout: plain
+    required: true
+    guide: データセット・ベースライン・評価指標。表で簡潔に。
+
+  - id: results
+    title: 結果
+    layout: [figure-full, metrics, compare]
+    required: true
+    guide: 主結果1枚 + 分析(アブレーション等)1〜2枚。見出しは主張文。
+
+  - id: conclusion
+    title: 結論
+    layout: takeaway
+    required: true
+    guide: 課題→提案→結果を3行で再掲し、take-home message を1文で。
+
+# 時間配分の目安(発表時間に対する比率)
+time_allocation:
+  background: 0.20
+  related: 0.10
+  proposal: 0.30
+  experiment: 0.10
+  results: 0.20
+  conclusion: 0.10

@@ -1,0 +1,144 @@
+/* @theme lab */
+/* 案1: Editorial Minimal — 余白と太いタイポで見せる。モダンなテック企業デッキ風 */
+
+@import 'default';
+
+:root {
+  --c-bg: #ffffff;
+  --c-text: #16181d;
+  --c-muted: #8a91a0;
+  --c-accent: #2456f0;
+  --c-accent-soft: #eef3ff;
+  --c-panel: #f5f6f9;
+  --c-line: #e7e9ee;
+  --c-warn: #f59e0b;
+  --font-body: 'Hiragino Sans', 'Noto Sans JP', 'Helvetica Neue', sans-serif;
+
+  font-family: var(--font-body);
+  font-size: 23px;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: 0.015em;
+  color: var(--c-text);
+  background: var(--c-bg);
+  padding: 60px 76px 56px;
+}
+
+/* ---- 基本要素 ---- */
+h1, h2 { font-weight: 700; letter-spacing: 0.01em; line-height: 1.35; }
+h2 { font-size: 1.65em; margin: 0 0 0.7em; }
+h2::before {
+  content: '';
+  display: block;
+  width: 44px; height: 6px;
+  border-radius: 3px;
+  background: var(--c-accent);
+  margin-bottom: 20px;
+}
+h3 { font-size: 1.05em; font-weight: 700; }
+strong { color: var(--c-accent); font-weight: 700; }
+ul li, ol li { margin: 0.35em 0; }
+ul li::marker { color: var(--c-accent); }
+code { background: var(--c-panel); border-radius: 6px; padding: 0.05em 0.4em; font-size: 0.9em; }
+table { font-size: 0.82em; border-collapse: collapse; margin: 1em auto; }
+th { background: none; color: var(--c-muted); font-weight: 600; border-bottom: 2px solid var(--c-text); }
+td { border-bottom: 1px solid var(--c-line); }
+blockquote { border-left: 4px solid var(--c-accent); color: var(--c-muted); padding-left: 1em; }
+img { display: block; margin: 0.8em auto; max-height: 60%; border-radius: 10px; }
+section::after { color: var(--c-muted); font-size: 0.55em; font-weight: 600; }
+footer { color: var(--c-muted); font-size: 0.5em; letter-spacing: 0.08em; }
+
+/* ---- title: 表紙 ---- */
+section.title { justify-content: center; padding: 0 100px; }
+section.title h1 { font-size: 2.5em; font-weight: 800; line-height: 1.3; border: none; }
+section.title h1::before {
+  content: '';
+  display: block;
+  width: 64px; height: 8px;
+  border-radius: 4px;
+  background: var(--c-accent);
+  margin-bottom: 28px;
+}
+section.title .meta { color: var(--c-muted); font-size: 0.85em; margin-top: 40px; letter-spacing: 0.05em; }
+
+/* ---- section: 章扉 ---- */
+section.section { justify-content: center; background: var(--c-text); color: #fff; padding: 0 100px; }
+section.section h1 { font-size: 2em; font-weight: 800; color: #fff; border: none; }
+section.section h1::before {
+  content: '';
+  display: block;
+  width: 52px; height: 7px;
+  border-radius: 4px;
+  background: var(--c-accent);
+  margin-bottom: 24px;
+}
+section.section::after { color: rgba(255,255,255,0.45); }
+
+/* ---- two-col ---- */
+section .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: center; }
+section .cols.w64 { grid-template-columns: 6fr 4fr; }
+
+/* ---- compare ---- */
+section.compare .cols { align-items: stretch; gap: 28px; }
+section.compare .col {
+  border-radius: 16px;
+  padding: 26px 32px;
+  box-shadow: 0 10px 30px rgba(22, 24, 29, 0.07);
+}
+section.compare .col.baseline { background: var(--c-panel); }
+section.compare .col.baseline h3 { color: var(--c-muted); }
+section.compare .col.proposed { background: var(--c-accent-soft); border: 2px solid var(--c-accent); }
+section.compare .col.proposed h3 { color: var(--c-accent); }
+
+/* ---- figure-full ---- */
+section.figure-full { text-align: center; }
+section.figure-full h2 { text-align: left; }
+section.figure-full img { max-height: 68%; box-shadow: 0 10px 30px rgba(22, 24, 29, 0.08); }
+section.figure-full .caption { color: var(--c-muted); font-size: 0.65em; margin-top: 0.6em; }
+
+/* ---- metrics ---- */
+section .metrics { display: flex; gap: 28px; justify-content: center; margin-top: 40px; }
+section .metric {
+  flex: 1;
+  background: var(--c-panel);
+  border-radius: 16px;
+  padding: 30px 24px;
+  text-align: center;
+}
+section .metric .value {
+  font-size: 2.6em; font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.1;
+  color: var(--c-accent);
+  font-variant-numeric: tabular-nums;
+}
+section .metric .label { color: var(--c-muted); font-size: 0.62em; font-weight: 600; margin-top: 10px; letter-spacing: 0.06em; }
+
+/* ---- discussion ---- */
+section.discussion h1 { font-size: 1.65em; border: none; }
+section.discussion h1::before {
+  content: 'DISCUSSION';
+  display: block;
+  width: auto; height: auto; background: none;
+  color: var(--c-warn);
+  font-size: 0.5em; font-weight: 800; letter-spacing: 0.22em;
+  margin-bottom: 14px;
+}
+section.discussion ol li {
+  background: var(--c-panel);
+  border-radius: 12px;
+  padding: 16px 22px;
+  margin: 14px 0;
+  list-style-position: inside;
+  font-weight: 600;
+}
+
+/* ---- takeaway ---- */
+section .takeaway {
+  background: var(--c-text);
+  color: #fff;
+  border-radius: 14px;
+  padding: 22px 30px;
+  font-weight: 700;
+  font-size: 1.05em;
+  margin-top: 36px;
+}
