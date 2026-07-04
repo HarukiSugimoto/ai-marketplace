@@ -23,6 +23,11 @@
       "name": "paper-lab",
       "source": "./plugins/paper-lab",
       "description": "論文調査・原稿作成システム。論文ノートの蓄積 → 関連研究章・原稿ドラフト・査読者視点レビューへ蒸留。修論対応。"
+    },
+    {
+      "name": "pm-kit",
+      "source": "./plugins/pm-kit",
+      "description": "議事録・意思決定ログシステム。雑メモ→議事録+ToDo、決定のADR風記録、未消化アイテムからのアジェンダ起案。会社パック対応。"
     }
   ]
 }

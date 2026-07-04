@@ -1,0 +1,21 @@
+# pm-kit 会社パック — 文書の体裁・文化を会社ごとに閉じ込める
+# 転職・副業したら companies/<新会社id>/ にコピーして書き換えるだけ
+
+company: _example
+
+# 文体・表記
+tone: です・ます            # 議事録・アジェンダの文体
+attendee_style: 姓+さん     # 敬称(例: 姓+さん / 姓のみ / フルネーム)
+date_format: YYYY/MM/DD
+confidential_label: ""      # 例: "社外秘"。空なら表示しない
+
+# 議事録の運用
+minutes:
+  distribution: slack       # 共有先の文化 (slack / email / notion / none)
+  share_deadline: 当日中     # 共有期限の目安(短縮版を出すときの前提)
+
+# 追加の禁則・ルール(自由記述。スキルが生成時に従う)
+notes: []
+# 例:
+#   - 期限は必ず営業日で書く
+#   - 顧客名はイニシャル表記

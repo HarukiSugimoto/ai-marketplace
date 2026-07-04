@@ -44,13 +44,15 @@ Claude Code 内で:
 | [lab-slides](plugins/lab-slides/) | 研究発表スライド生成(進捗報告・学会/修論)。Marp + デザインシステム |
 | [work-slides](plugins/work-slides/) | ビジネススライド生成(提案書・報告書・定例)。結論ファースト構成・会社テンプレパック(転職対応)・編集可能pptx |
 | [paper-lab](plugins/paper-lab/) | 論文調査・原稿作成。論文ノート蓄積 → 関連研究章・章ドラフト・査読者視点レビューへ蒸留 |
+| [pm-kit](plugins/pm-kit/) | 議事録・意思決定ログ。雑メモ→議事録+ToDo、ADR風の決定記録、未消化アイテムからアジェンダ起案 |
 
 スライド2つは同型のエンジン(deck.json → HTML プレビュー + 編集可能pptx の二枚看板)を持つが、
 プラグインは自己完結が原則(キャッシュに単体コピーされる)なので共有ライブラリ化はせず、
 それぞれの中に持つ。テーマ・レイアウト・話法は完全に別物として育てる。
 
-paper-lab は「**蓄積 → 蒸留**」型(日々論文ノートを貯め、定期的に上位文書へまとめる)。
-ノートは lab-slides の進捗報告・修論の素材になる。
+paper-lab / pm-kit は「**蓄積 → 蒸留**」型(日々ログを貯め、定期的に上位文書へまとめる)。
+paper-lab のノートは lab-slides の進捗報告・修論の素材になり、
+pm-kit の議事録は work-slides の定例資料に接続する。
 
 ## 設計方針: 資産は層で分ける
 
@@ -63,12 +65,12 @@ paper-lab は「**蓄積 → 蒸留**」型(日々論文ノートを貯め、定
   デザイントークン / レイアウトカタログ / テンプレ / skill 本体
   → 育てたら git push、各マシンは /plugin update で追従
 
-【中間層(work-slides のみ)】= companies/<会社id>/(この repo 内)
-  会社ごとの配色・ロゴ・体裁規定。転職したらパックを1つ足すだけ
-  → 職場ディレクトリの .work-slides/workspace.yaml が「どの会社か」を宣言
+【中間層(work-slides / pm-kit)】= companies/<会社id>/(この repo 内)
+  会社ごとの配色・ロゴ・体裁規定・文書文化。転職したらパックを1つ足すだけ
+  → 職場ディレクトリの .work-slides/ / .pm-kit/ の workspace.yaml が「どの会社か」を宣言
 
-【現場層】= 各プロジェクト内の .lab-slides/ .paper-lab/ / 職場ディレクトリの .work-slides/
-  図の資産・outline 履歴・論文ノート・テーマ上書き
+【現場層】= 各プロジェクト内の .lab-slides/ .paper-lab/ / 職場の .work-slides/ .pm-kit/
+  図の資産・outline 履歴・論文ノート・議事録・decision の中身
   → 現場のリポジトリと一緒に管理され、プラグイン更新の影響を受けない
 ```
 
