@@ -1,0 +1,56 @@
+{
+  "meta": { "title": "work-slides レイアウトカタログ デモ", "type": "proposal" },
+  "slides": [
+    { "layout": "title", "to": "○○株式会社 御中",
+      "title": "業務効率化ツール導入のご提案",
+      "subtitle": "初期費用ゼロで始める帳票自動化",
+      "meta": "2027-04-15 | 開発部 杉本晴基" },
+    { "layout": "exec-summary", "headline": "本日お願いしたいこと",
+      "ask": "帳票自動化ツールの試験導入(3ヶ月・50万円)をご承認いただきたい",
+      "points": [
+        { "label": "効果", "text": "月80時間の手作業を自動化(投資回収は4ヶ月)" },
+        { "label": "リスク", "text": "試験導入のため解約自由・既存業務への影響なし" },
+        { "label": "体制", "text": "現行チーム2名で導入可能。追加採用は不要" } ] },
+    { "layout": "agenda", "title": "本日の内容",
+      "items": ["現状の課題", "ご提案内容", "導入効果", "スケジュールと費用"], "current": 1 },
+    { "layout": "section", "title": "現状の課題", "no": "01" },
+    { "layout": "problem-solution", "header": "現状の課題", "headline": "手作業の帳票処理がボトルネックになっている",
+      "problem": { "title": "課題", "bullets": ["月80時間の手入力が発生", "転記ミスが月10件", "担当1名に属人化"] },
+      "solution": { "title": "解決策", "bullets": ["OCR+自動転記で入力ゼロに", "検証ルールでミスを防止", "手順を標準化し引き継ぎ可能に"] } },
+    { "layout": "section", "title": "ご提案内容", "no": "02" },
+    { "layout": "body", "header": "ご提案内容", "headline": "導入は3ステップで完了する",
+      "bullets": ["現行帳票のフォーマット登録(1週間)", "並行運用で精度を検証(1ヶ月)", "本番切替(段階的に移行)"] },
+    { "layout": "two-col", "header": "ご提案内容", "headline": "ダッシュボードで処理状況を一目で把握できる", "wide": true,
+      "left": { "image": "nonexistent.png" },
+      "right": { "bullets": ["処理件数・エラーを常時表示", "異常時はメールで即時通知"] } },
+    { "layout": "compare", "header": "ご提案内容", "headline": "スモールスタートのB案を推奨する",
+      "options": [
+        { "title": "A案: 全面導入", "bullets": ["初年度 600万円", "効果は最大", "移行リスクが大きい"] },
+        { "title": "B案: 試験導入", "bullets": ["3ヶ月 50万円", "リスク最小", "効果検証後に拡大判断"], "recommended": true },
+        { "title": "C案: 現状維持", "bullets": ["追加費用なし", "課題は未解決のまま"] } ] },
+    { "layout": "section", "title": "導入効果", "no": "03" },
+    { "layout": "kpi", "header": "導入効果", "headline": "3ヶ月で投資を回収できる",
+      "metrics": [
+        { "value": "-80h", "label": "月間作業時間" },
+        { "value": "-95%", "label": "転記ミス" },
+        { "value": "4ヶ月", "label": "投資回収期間" } ] },
+    { "layout": "section", "title": "スケジュールと費用", "no": "04" },
+    { "layout": "roadmap", "header": "スケジュールと費用", "headline": "3ヶ月で効果検証まで完了する",
+      "phases": [
+        { "label": "準備", "period": "4月", "items": ["契約・環境構築", "フォーマット登録"] },
+        { "label": "並行運用", "period": "5月", "items": ["手作業と並行処理", "精度測定"] },
+        { "label": "評価", "period": "6月", "items": ["効果レポート", "本格導入の判断"] } ] },
+    { "layout": "table", "header": "スケジュールと費用", "headline": "試験導入の費用は総額50万円",
+      "columns": ["項目", "内容", "費用"],
+      "rows": [["ライセンス", "10ユーザー × 3ヶ月", "30万円"],
+               ["初期設定", "帳票フォーマット登録", "15万円"],
+               ["トレーニング", "操作研修 2回", "5万円"]],
+      "note": "※ 金額は税抜。本番移行時は別途お見積り" },
+    { "layout": "next-action", "header": "まとめ", "headline": "次のアクション",
+      "actions": [
+        { "who": "貴社", "what": "試験導入のご承認", "when": "4/末" },
+        { "who": "弊社", "what": "契約書・導入計画書の送付", "when": "承認後3営業日" },
+        { "who": "両社", "what": "キックオフミーティング", "when": "5月第1週" } ],
+      "message": "まずは3ヶ月の試験導入から、リスクなく始められます" }
+  ]
+}

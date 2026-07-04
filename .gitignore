@@ -5,4 +5,8 @@
 plugins/lab-slides/theme/_tokens.css
 plugins/lab-slides/node_modules/
 plugins/lab-slides/catalog/demo_deck.md
+.work-theme-merged.css
+plugins/work-slides/theme/_tokens.css
+plugins/work-slides/node_modules/
+plugins/work-slides/catalog/demo_deck.md
 .DS_Store

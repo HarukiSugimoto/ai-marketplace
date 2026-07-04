@@ -1,0 +1,9 @@
+{
+  "name": "work-slides-renderer",
+  "private": true,
+  "version": "0.1.0",
+  "description": "work-slides の編集可能pptxレンダラー依存",
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}

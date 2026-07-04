@@ -1,0 +1,19 @@
+# 会社の体裁規定・禁則(validator と生成時の judgment に使う。レンダラーは読まない)
+# 会社パックを作ったら、社内テンプレの規定に合わせて書き換えること。
+
+company: _example          # 会社 id(ディレクトリ名と一致させる)
+display_name: サンプル株式会社
+
+format:
+  page_number: "n"         # ページ番号の形式: n / n/total / なし
+  date_format: "YYYY年M月D日"
+  confidential_label: ""   # 全スライドに入れる機密表示(例: "社外秘")。空なら無し
+
+writing:
+  tone: です・ます調        # 文体
+  headline_style: 主張文    # 見出し: 主張文 / 体言止め
+  max_bullets: 5           # 1スライドの箇条書き上限
+
+forbidden:
+  - 他社ロゴの無断使用
+  - 未承認の実績数値の掲載
