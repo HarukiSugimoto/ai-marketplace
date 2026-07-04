@@ -107,6 +107,30 @@ validator が参照切れを検査してくれる。
   → 気に入ったら `/catalog-add` → 汎用ならプラグイン層(このrepo)、PJ固有ならプロジェクト層に登録
   → プラグイン層に足したら git commit & push、他マシンは `/plugin update lab-slides`
 
+## カタログ・画像を repo に昇格させる仕組み(重要)
+
+インストール済みプラグインは開発リポジトリの**キャッシュのコピー**として
+`~/.claude/plugins/cache/` に置かれ、`${CLAUDE_PLUGIN_ROOT}` はそこを指す。
+このコピーは **`/plugin update` で上書きされる**ので、直接編集しても消える・git に乗らない。
+
+```
+開発リポジトリ(原本, GitHub にpush)  ──push/update──▶  キャッシュ(実行時コピー, 使い捨て)
+   ~/Desktop/個人開発/ai-marketplace                      ~/.claude/plugins/cache/...
+```
+
+そのため**別の研究室ディレクトリで良い型・共通画像ができたら、行き先は常に開発リポジトリ**。
+`/catalog-add` はこれを自動でやる:
+
+1. 開発リポジトリの場所は `~/.config/lab-slides/config.json` の `repoPath` に記録
+   (`scripts/promote.sh path` で解決。**現在ディレクトリに依存しない**)
+2. その原本の `theme/lab.css` / `catalog/layouts.yaml` / `assets/` を編集
+3. `scripts/promote.sh commit "<内容>"` で commit(必要なら push)
+4. 各マシンで `/plugin update lab-slides` → キャッシュが最新化されて反映
+
+共通画像は `promote.sh asset <画像> [名前]` で repo の `assets/` に登録。
+別マシンでリポジトリを clone していない場合は昇格できない(そのマシンは `/plugin update`
+で受け取る消費専用)。config.json をそのマシン用に書けば昇格側にもなれる。
+
 ## パイプライン(内部動作)
 
 ```
