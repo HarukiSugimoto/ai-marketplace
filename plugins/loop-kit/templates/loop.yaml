@@ -1,0 +1,32 @@
+# loop-kit ループ設定 — /loop-design が生成し、/loop-run が読む
+# 置き場所: <プロジェクト>/.loop/<slug>/loop.yaml
+
+slug: <短いkebab-case名>
+goal: <ゴール1行>
+created: <YYYY-MM-DD>
+
+# 実行方式: session | shell | fanout
+#   session: Claude Code セッション内で Stop hook がループ(見ていられる規模、〜30分)
+#   shell:   別ターミナルの run-loop.sh で headless ループ(放置できる規模)
+#   fanout:  タスクリスト×1回ずつ(マイグレーション等の同型作業の量産)
+mode: shell
+
+# 安全機構(必須): completion_promise は完全一致のため複数条件に使えない。
+# 第一の安全機構は max_iterations とする(公式 ralph-wiggum README の規定)
+max_iterations: 25
+completion_promise: "COMPLETE"
+
+# 検証コマンド: pass/fail を返すもの(テスト、リンター、ビルド)。
+# shell モードでは「完了宣言 AND 検証パス」の二重ゲートで終了判定する
+verify_command: "<例: npm test>"
+
+# headless 実行時の権限(shell / fanout モードで使用)
+allowed_tools: "Edit,Write,Read,Glob,Grep,Bash"
+permission_mode: acceptEdits   # acceptEdits | dontAsk。隔離環境なら -d(全スキップ)も可
+
+# fanout モードのみ: タスクリストとプロンプトテンプレート
+# list_file: .loop/<slug>/items.txt
+# prompt_template: "Migrate {} from X to Y. 最後に OK か FAIL だけを出力。"
+
+# メモ: 予算・所要時間の見積り、worktree を切ったか、など
+notes: ""

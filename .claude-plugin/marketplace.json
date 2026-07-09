@@ -28,6 +28,11 @@
       "name": "pm-kit",
       "source": "./plugins/pm-kit",
       "description": "議事録・意思決定ログシステム。雑メモ→議事録+ToDo、決定のADR風記録、未消化アイテムからのアジェンダ起案。会社パック対応。"
+    },
+    {
+      "name": "loop-kit",
+      "source": "./plugins/loop-kit",
+      "description": "ループエンジニアリング支援システム。適否診断→ループ設計(PROMPT.md+終了条件)→実行(Stop hook/シェルループ/ファンアウト)→振り返り。"
     }
   ]
 }

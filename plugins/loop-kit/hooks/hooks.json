@@ -1,0 +1,15 @@
+{
+  "description": "loop-kit のセッション内ループ用 Stop hook。状態ファイルが無ければ何もしない。",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/stop-hook.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

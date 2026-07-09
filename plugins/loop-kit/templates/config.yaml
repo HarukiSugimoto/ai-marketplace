@@ -1,0 +1,33 @@
+# loop-kit プロジェクト設定 — <PJ>/.loop-kit/config.yaml
+#
+# そのプロジェクトのループ既定値。/loop-design がこれを読んで loop.yaml を
+# 自動で埋める。無ければ CLAUDE.md とファイル構成から検出して、このファイルの
+# 作成を提案する。現場に近いほど強い(このファイル > 検出結果)。
+#
+# 原則: コーディング規約・技術スタックの詳細は CLAUDE.md 側に持たせ、ここでは
+# 複製しない。ここに書くのは「ループ特有のノブ」だけ。
+
+# 検証コマンド: pass/fail を返すもの(ループの終了ゲートの中核)。
+# 複数あるなら && でつなぐ。例: "pnpm lint && pnpm test"
+verify_command: "<例: pnpm test>"
+
+# ビルド/型チェック等、検証に含めたい補助コマンド(任意)
+build_command: "<例: pnpm build。無ければ空でよい>"
+
+# 保護パス: ループに触らせたくないファイル/ディレクトリ。
+# /loop-design が PROMPT.md の「厳守事項」に転記し、必要なら allowed_tools を絞る
+protected_paths:
+  - "<例: migrations/>"
+  - "<例: src/legacy/>"
+
+# このPJでのループ既定。/loop-design が loop.yaml の初期値に使う
+default_mode: session          # session | shell | fanout
+default_max_iterations: 15
+require_worktree: false         # 既存コードベースで true にすると worktree 隔離を必須提案
+
+# headless 実行(shell/fanout)の既定権限
+allowed_tools: "Edit,Write,Read,Glob,Grep,Bash"
+permission_mode: acceptEdits
+
+# 規約の所在(複製せず参照する。/loop-design はここを読めと PROMPT.md に書く)
+conventions_ref: "CLAUDE.md"
