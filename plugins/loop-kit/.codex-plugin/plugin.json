@@ -1,0 +1,35 @@
+{
+  "name": "loop-kit",
+  "version": "0.1.0",
+  "description": "ループエンジニアリング支援システム。適否診断→ループ設計→実行(シェルループ/ファンアウト)→振り返りを型化する。",
+  "author": {
+    "name": "Haruki Sugimoto",
+    "email": "sugisugiharu@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "loop",
+    "agent",
+    "automation",
+    "ralph",
+    "iteration"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Loop Kit",
+    "shortDescription": "ループエンジニアリングを設計・実行・振り返る。",
+    "longDescription": "コーディングエージェントを繰り返し駆動するループを設計するためのプラグイン。タスクの適否診断、ループプロンプト設計、外側シェルループ(codex exec)とファンアウトでの実行、失敗パターンからのプロンプト改善までを型化する。session モード(Stop hook ループ)は Claude Code 限定で、Codex では shell / fanout モードを使う。",
+    "developerName": "Haruki Sugimoto",
+    "category": "Productivity",
+    "capabilities": [
+      "Plan",
+      "Generate",
+      "Automate"
+    ],
+    "defaultPrompt": [
+      "Use loop-kit to design a loop for this task.",
+      "Run a shell loop with loop-kit.",
+      "Review why my loop-kit loop did not finish."
+    ]
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "name": "ai-marketplace",
+  "interface": {
+    "displayName": "AI Marketplace"
+  },
+  "plugins": [
+    {
+      "name": "lab-slides",
+      "source": {
+        "source": "local",
+        "path": "./plugins/lab-slides"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "work-slides",
+      "source": {
+        "source": "local",
+        "path": "./plugins/work-slides"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "paper-lab",
+      "source": {
+        "source": "local",
+        "path": "./plugins/paper-lab"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "pm-kit",
+      "source": {
+        "source": "local",
+        "path": "./plugins/pm-kit"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "loop-kit",
+      "source": {
+        "source": "local",
+        "path": "./plugins/loop-kit"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

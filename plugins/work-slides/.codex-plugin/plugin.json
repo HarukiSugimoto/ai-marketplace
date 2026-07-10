@@ -1,0 +1,35 @@
+{
+  "name": "work-slides",
+  "version": "0.1.0",
+  "description": "ビジネススライドを段階生成するシステム。提案書、報告書、定例資料を結論ファーストで作成する。",
+  "author": {
+    "name": "Haruki Sugimoto",
+    "email": "sugisugiharu@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "slides",
+    "business",
+    "presentation",
+    "pptx",
+    "marp"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Work Slides",
+    "shortDescription": "ビジネス資料を生成・検証する。",
+    "longDescription": "提案書、報告書、定例資料などのビジネススライドを、結論ファースト構成、会社テンプレパック、編集可能pptx出力に対応して段階生成するCodex plugin。",
+    "developerName": "Haruki Sugimoto",
+    "category": "Productivity",
+    "capabilities": [
+      "Write",
+      "Generate",
+      "Validate"
+    ],
+    "defaultPrompt": [
+      "Use work-slides to create a proposal deck.",
+      "Build a weekly report deck with work-slides.",
+      "Validate this work-slides deck."
+    ]
+  }
+}

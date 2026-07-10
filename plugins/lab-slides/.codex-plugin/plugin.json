@@ -1,0 +1,35 @@
+{
+  "name": "lab-slides",
+  "version": "0.1.0",
+  "description": "研究発表スライドを段階生成するシステム。素材からMarp Markdown、HTML確認、PDF、編集可能pptxまでを扱う。",
+  "author": {
+    "name": "Haruki Sugimoto",
+    "email": "sugisugiharu@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "slides",
+    "marp",
+    "research",
+    "presentation",
+    "lab"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Lab Slides",
+    "shortDescription": "研究発表スライドを生成・検証する。",
+    "longDescription": "進捗報告、学会発表、修論発表向けに、素材整理からcontent.yaml、outline.yaml、Marp Markdown、HTML確認、PDF、編集可能pptxまでを段階生成するCodex plugin。",
+    "developerName": "Haruki Sugimoto",
+    "category": "Productivity",
+    "capabilities": [
+      "Write",
+      "Generate",
+      "Validate"
+    ],
+    "defaultPrompt": [
+      "Use lab-slides to create a research deck.",
+      "Build a progress report deck with lab-slides.",
+      "Validate this lab-slides deck."
+    ]
+  }
+}

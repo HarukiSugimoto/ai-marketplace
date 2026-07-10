@@ -1,0 +1,35 @@
+{
+  "name": "paper-lab",
+  "version": "0.1.0",
+  "description": "論文調査・原稿作成システム。論文ノートを蓄積し、関連研究章、章ドラフト、推敲へ蒸留する。",
+  "author": {
+    "name": "Haruki Sugimoto",
+    "email": "sugisugiharu@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "paper",
+    "research",
+    "survey",
+    "writing",
+    "thesis"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Paper Lab",
+    "shortDescription": "論文調査と原稿作成を支援する。",
+    "longDescription": "論文を構造化ノートとして蓄積し、claimを軸に関連研究章、章ドラフト、推敲、査読者視点レビューへ蒸留するCodex plugin。",
+    "developerName": "Haruki Sugimoto",
+    "category": "Productivity",
+    "capabilities": [
+      "Research",
+      "Write",
+      "Review"
+    ],
+    "defaultPrompt": [
+      "Use paper-lab to survey papers on this topic.",
+      "Create a paper note with paper-lab.",
+      "Draft related work with paper-lab."
+    ]
+  }
+}

@@ -51,7 +51,8 @@ Anthropic 公式の基準で診断し、**表で見せる**:
 
 1. **実行方式**(1つ選ぶ):
    - `session` — セッション内で Stop hook がループ。見ていられる規模(〜30分)、
-     途中で口を挟みたいとき
+     途中で口を挟みたいとき。**Claude Code 限定**(Codex は hook を headless で
+     発火しないため。Codex では shell を使う)
    - `shell` — 別ターミナルで `run-loop.sh`(headless `claude -p` の外側ループ)。
      放置できる規模。**「完了宣言 AND 検証コマンドパス」の二重ゲート**で終了
    - `fanout` — タスクリスト×1回ずつ(`fanout.sh`)。同型作業の量産

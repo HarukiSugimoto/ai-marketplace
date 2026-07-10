@@ -1,0 +1,35 @@
+{
+  "name": "pm-kit",
+  "version": "0.1.0",
+  "description": "議事録・意思決定ログシステム。雑メモから議事録、アクションアイテム、決定記録、次回アジェンダを作る。",
+  "author": {
+    "name": "Haruki Sugimoto",
+    "email": "sugisugiharu@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "meeting",
+    "minutes",
+    "agenda",
+    "decision",
+    "pm"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "PM Kit",
+    "shortDescription": "議事録・決定ログ・アジェンダを作る。",
+    "longDescription": "雑メモから議事録とアクションアイテムを抽出し、決定事項をADR風に記録し、未消化アイテムから次回アジェンダを起案するCodex plugin。",
+    "developerName": "Haruki Sugimoto",
+    "category": "Productivity",
+    "capabilities": [
+      "Write",
+      "Summarize",
+      "Plan"
+    ],
+    "defaultPrompt": [
+      "Use pm-kit to turn these notes into minutes.",
+      "Create a decision log with pm-kit.",
+      "Draft the next agenda with pm-kit."
+    ]
+  }
+}

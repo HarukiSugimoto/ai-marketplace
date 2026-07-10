@@ -1,12 +1,14 @@
 # ai-marketplace
 
-自分専用の Claude Code プラグイン marketplace。
+自分専用の Claude Code / Codex プラグイン marketplace。
 作った道具(skill / agent / hook)は全部ここに載せ、新しいマシンでも2コマンドで復元する。
 
 > **この repo は private 前提。** work-slides の `companies/` に会社の配色・ロゴ・体裁規定を
 > 含むため、公開リポジトリにしないこと。
 
 ## セットアップ
+
+### Claude Code
 
 Claude Code 内で:
 
@@ -25,13 +27,35 @@ Claude Code 内で:
 インストール後、各プラグインの skill(`/slide-new` 等)がそのまま使える。
 使い方は各プラグインの README を参照。
 
+### Codex
+
+Codex CLI で:
+
+```
+# このマシンに repo がある場合
+codex plugin marketplace add /Users/harusugi/Desktop/個人開発/ai-marketplace
+
+# 新しいマシン(GitHub に push 済みなら)
+codex plugin marketplace add <GitHubのURL or owner/ai-marketplace>
+```
+
+その後、Codex の plugin browser で `AI Marketplace` を開き、必要なプラグインを install する。
+
+```
+codex
+/plugins
+```
+
+Codex 用 marketplace には `loop-kit` 以外を載せている。
+各プラグインの Codex manifest は `plugins/<名前>/.codex-plugin/plugin.json` に置く。
+
 ## 日常の運用
 
 | したいこと | やること |
 |---|---|
 | プラグインを編集した | この repo を編集 → commit & push → `/plugin update <名前>` |
 | 他マシンに反映 | そのマシンで `/plugin update <名前>` |
-| 新しいプラグインを足す | `plugins/<名前>/` を作り `.claude-plugin/plugin.json` を置く → `marketplace.json` の `plugins` に1エントリ追加 |
+| 新しいプラグインを足す | `plugins/<名前>/` を作り `.claude-plugin/plugin.json` と `.codex-plugin/plugin.json` を置く → 各 marketplace に1エントリ追加 |
 | 入っているものの確認 | `/plugin` で一覧 |
 
 注意: `/plugin install` は repo の内容を `~/.claude/plugins/cache/` にコピーする。
