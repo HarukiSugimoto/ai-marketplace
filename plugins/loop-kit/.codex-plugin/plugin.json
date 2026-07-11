@@ -1,6 +1,6 @@
 {
   "name": "loop-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ループエンジニアリング支援システム。適否診断→ループ設計→実行(シェルループ/ファンアウト)→振り返りを型化する。",
   "author": {
     "name": "Haruki Sugimoto",
