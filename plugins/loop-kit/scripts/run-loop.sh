@@ -15,6 +15,11 @@
 #   -c CMD    検証コマンド(例: "npm test")。指定時は「検証パス AND 完了宣言」の
 #             二重ゲートで終了判定する
 #   -t TOOLS  --allowedTools に渡す値(デフォルト: "Edit,Write,Read,Glob,Grep,Bash")
+#             ※ デフォルトに Task は無い(単一エージェントで小さく刻む前提)。
+#               レビュー/探索を sub-agent に隔離させたいなら Task を足す:
+#               -t "Edit,Write,Read,Glob,Grep,Bash,Task"
+#               → PJ の .claude/agents/ の code-review 等が隔離実行される。
+#               付けないと同一コンテキストでインライン実行になる(隔離なし)。
 #   -m MODE   --permission-mode(デフォルト: acceptEdits)
 #   -w SECS   イテレーション間の待機秒数(デフォルト: 2)
 #   -d        --dangerously-skip-permissions で実行(隔離環境でのみ推奨)

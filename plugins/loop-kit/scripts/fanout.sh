@@ -14,6 +14,9 @@
 #   -l FILE   タスクリストファイル(必須、1行1項目)
 #   -P TEXT   プロンプトテンプレート(必須、{} が各行で置換される)
 #   -t TOOLS  --allowedTools に渡す値(デフォルト: "Edit,Write,Read,Glob,Grep,Bash")
+#             ※ デフォルトに Task は無い。各項目内で sub-agent(レビュー/探索)を
+#               隔離実行させたいなら Task を足す: -t "...,Task"。
+#               付けないと同一コンテキストでインライン実行になる(隔離なし)。
 #   -m MODE   --permission-mode(デフォルト: acceptEdits)
 #   -o DIR    出力ディレクトリ(デフォルト: .loop/fanout)
 #   -d        --dangerously-skip-permissions で実行(隔離環境でのみ推奨)

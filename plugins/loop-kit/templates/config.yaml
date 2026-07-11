@@ -26,6 +26,8 @@ default_max_iterations: 15
 require_worktree: false         # 既存コードベースで true にすると worktree 隔離を必須提案
 
 # headless 実行(shell/fanout)の既定権限
+# ※ Task は既定に含めない。code-review 等の PJ agent を sub-agent として
+#    隔離実行させたい PJ なら ,Task を足す: "Edit,Write,Read,Glob,Grep,Bash,Task"
 allowed_tools: "Edit,Write,Read,Glob,Grep,Bash"
 permission_mode: acceptEdits
 

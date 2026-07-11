@@ -21,6 +21,11 @@ completion_promise: "COMPLETE"
 verify_command: "<例: npm test>"
 
 # headless 実行時の権限(shell / fanout モードで使用)
+# ※ Task は既定に含めない(単一エージェントで小さく刻む前提)。PJ の
+#    .claude/agents/(code-review 等)を sub-agent として隔離実行させたいなら
+#    末尾に ,Task を足す: "Edit,Write,Read,Glob,Grep,Bash,Task"。
+#    足さないと同一コンテキストでインライン実行になる(隔離なし)。
+#    session モードは通常セッション = Task が元から有効なので指定不要。
 allowed_tools: "Edit,Write,Read,Glob,Grep,Bash"
 permission_mode: acceptEdits   # acceptEdits | dontAsk。隔離環境なら -d(全スキップ)も可
 

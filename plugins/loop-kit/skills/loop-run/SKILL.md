@@ -58,6 +58,12 @@ completion_promise: "<フレーズ>"
 
 - パスはプラグインの scripts ディレクトリ(Claude: `${CLAUDE_PLUGIN_ROOT}/scripts/`)を
   実パスに展開して提示する
+- **sub-agent を隔離実行させたい場合は `-t` に `Task` を足す**と案内する
+  (例: `-t "Edit,Write,Read,Glob,Grep,Bash,Task"`)。shell モードの既定ツールに
+  `Task` は無いため、そのままだと PJ の `.claude/agents/`(code-review 等)を
+  呼べず、レビュー等は同一コンテキストでインライン実行になる(隔離なし)。
+  `loop.yaml` の `allowed_tools` に `Task` があればそれをそのまま `-t` に渡す。
+  session モードは通常セッション = `Task` が元から効くので指定不要
 - 隔離環境(worktree / コンテナ)なら `-d`(権限全スキップ)も選択肢と伝える
 - 既存コードベースなら実行前に `git worktree add` を提案する
 - このセッションで実行したい場合は `!` プレフィックスで打てるが、
