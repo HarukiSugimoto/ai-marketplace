@@ -53,22 +53,23 @@ if [[ ! -f "$TRANSCRIPT_PATH" ]]; then
   exit 0
 fi
 
-LAST_LINE=$(grep '"role":"assistant"' "$TRANSCRIPT_PATH" | tail -1 || true)
-if [[ -z "$LAST_LINE" ]]; then
-  echo "⚠️  loop-kit: アシスタントメッセージを取得できませんでした。ループを停止します。" >&2
-  rm "$STATE_FILE"
-  exit 0
-fi
-
-LAST_OUTPUT=$(echo "$LAST_LINE" | jq -r '
-  .message.content |
-  map(select(.type == "text")) |
-  map(.text) |
-  join("\n")
-' 2>/dev/null || true)
+# transcript の JSONL は content ブロック(thinking / text / tool_use)ごとに
+# 別々の assistant 行として記録される。ターン末尾が tool_use / thinking のことが
+# あるため「最後の1行」だけ見るとテキストが空になり誤って自己停止する。
+# → 全 assistant 行から「直近の非空テキスト」を走査して採用する。
+#   改行を含むテキストを行単位で扱うため @base64 経由でエンコードし、最後に復号する。
+LAST_OUTPUT=$(grep '"role":"assistant"' "$TRANSCRIPT_PATH" \
+  | jq -r 'select(.message.content | type == "array")
+           | .message.content
+           | map(select(.type == "text") | .text)
+           | join("\n")
+           | select(length > 0)
+           | @base64' 2>/dev/null \
+  | tail -1 \
+  | { base64 --decode 2>/dev/null || base64 -d 2>/dev/null || true; })
 
 if [[ -z "$LAST_OUTPUT" ]]; then
-  echo "⚠️  loop-kit: 最終メッセージにテキストがありません。ループを停止します。" >&2
+  echo "⚠️  loop-kit: アシスタントの非空テキストが見つかりませんでした。ループを停止します。" >&2
   rm "$STATE_FILE"
   exit 0
 fi
