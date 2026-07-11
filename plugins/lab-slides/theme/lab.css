@@ -170,6 +170,19 @@ section .metric .value {
 }
 section .metric .label { color: var(--c-muted); font-size: 0.62em; margin-top: 10px; letter-spacing: 0.1em; }
 
+/* ---- table: 表(数値結果の一覧) ---- */
+section.table h2 { text-align: left; }
+section.table table { width: 94%; margin: 0.5em auto 0; font-size: 0.66em; }
+section.table thead th {
+  background: var(--c-accent); color: #fff; font-weight: 600;
+  border: none; padding: 7px 12px; text-align: center;
+}
+section.table tbody td { padding: 5px 12px; border-bottom: 1px solid var(--c-line); text-align: center; }
+section.table tbody td:first-child { text-align: left; }
+section.table tbody tr:nth-child(even) td { background: var(--c-panel); }
+section.table tbody strong { color: var(--c-accent); }
+section.table .note { color: var(--c-muted); font-size: 0.6em; font-family: var(--font-serif); margin-top: 0.6em; }
+
 /* ---- discussion ---- */
 section.discussion { background: var(--c-panel); }
 section.discussion h1 { font-size: 1.6em; border: none; color: var(--c-accent); }

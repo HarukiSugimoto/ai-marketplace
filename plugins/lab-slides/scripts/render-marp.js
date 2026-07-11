@@ -63,6 +63,19 @@ function slideMd(s, idx) {
         (s.metrics || []).map((m) => `<div class="metric"><div class="value">${esc(m.value)}</div><div class="label">${esc(m.label)}</div></div>`).join("\n") +
         `\n</div>`;
       break;
+    case "table": {
+      const cols = s.columns || [];
+      const hot = new Set(s.highlight || []);
+      const head = `| ${cols.map(esc).join(" | ")} |`;
+      const sep = `| ${cols.map(() => "---").join(" | ")} |`;
+      const rowLines = (s.rows || []).map((r, ri) => {
+        const cells = (Array.isArray(r) ? r : [r]).map(esc);
+        return `| ${cells.map((c) => (hot.has(ri) ? `**${c}**` : c)).join(" | ")} |`;
+      }).join("\n");
+      body = `## ${esc(s.headline)}\n\n${head}\n${sep}\n${rowLines}` +
+        (s.note ? `\n\n<div class="note">${esc(s.note)}</div>` : "");
+      break;
+    }
     case "discussion":
       body = `# ${esc(s.title || "議論したいこと")}\n\n` + (s.items || []).map((it, i) => `${i + 1}. ${esc(it)}`).join("\n");
       break;
@@ -76,6 +89,8 @@ function slideMd(s, idx) {
 }
 
 const front = `---\nmarp: true\ntheme: lab\npaginate: true\n---`;
-const md = [front, ...deck.slides.map(slideMd)].join("\n\n---\n\n") + "\n";
+// フロントマター直後に最初のスライドを置く(区切り --- は slide 間だけに入れる)。
+// [front, ...] を "---" で join すると front と slide1 の間にも --- が入り空スラができる。
+const md = front + "\n\n" + deck.slides.map(slideMd).join("\n\n---\n\n") + "\n";
 fs.writeFileSync(outPath, md);
 console.log("generated: " + outPath);

@@ -1,6 +1,6 @@
 {
   "name": "lab-slides",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "研究発表スライドを段階生成するシステム。素材からMarp Markdown、HTML確認、PDF、編集可能pptxまでを扱う。",
   "author": {
     "name": "Haruki Sugimoto",

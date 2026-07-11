@@ -17,6 +17,16 @@
       "image": "nonexistent.png", "caption": "図1: ○○データセットでの精度比較(n=5, 平均±標準偏差)" },
     { "layout": "metrics", "header": "比較・結果レイアウト", "headline": "metrics: 数値の大書き",
       "metrics": [ { "value": "-64%", "label": "推論レイテンシ" }, { "value": "+0.8", "label": "BLEU" }, { "value": "×1/3", "label": "パラメータ数" } ] },
+    { "layout": "table", "header": "比較・結果レイアウト", "headline": "table: 数値結果の一覧(アブレーション)",
+      "columns": ["除去した要素", "残", "mean", "base比", "判定"],
+      "rows": [
+        ["noEarlyVar", "8", "83.27", "-4.63", "最重要"],
+        ["noPruning", "9", "85.10", "-2.80", "重要"],
+        ["noWarmup", "10", "87.44", "-0.46", "軽微"],
+        ["baseline", "11", "87.90", "±0.00", "—"]
+      ],
+      "highlight": [0, 1], "widths": [3, 1, 1.4, 1.4, 1.6],
+      "note": "各行は当該要素を除いた条件。mean は3seed平均、base比はbaselineとの差。" },
     { "layout": "section", "title": "研究特有レイアウト" },
     { "layout": "discussion", "header": "研究特有レイアウト", "title": "議論したいこと",
       "items": ["○○の評価指標は△△で妥当か?", "実験規模を広げる前に□□を検証すべきか?"] },

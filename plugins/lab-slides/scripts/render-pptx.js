@@ -208,6 +208,63 @@ const RECIPES = {
     });
   },
 
+  table(slide, s) {
+    slide.background = { color: hex(C.bg) };
+    const by = addHeadline(slide, s.headline);
+    const cols = s.columns || [];
+    const rows = s.rows || [];
+    const nCol = Math.max(cols.length, 1);
+    const highlight = new Set(s.highlight || []);
+    const noteH = s.note ? 0.5 : 0;
+    const availH = S.h - by - 0.6 - noteH;
+
+    let colW;
+    if (Array.isArray(s.widths) && s.widths.length === nCol) {
+      const sum = s.widths.reduce((a, b) => a + b, 0);
+      colW = s.widths.map((x) => (CW * x) / sum);
+    } else {
+      const firstW = CW * (nCol <= 4 ? 0.4 : 0.32);
+      const restW = (CW - firstW) / Math.max(nCol - 1, 1);
+      colW = cols.map((_, i) => (i === 0 ? firstW : restW));
+    }
+
+    const nRows = rows.length + 1;
+    const fs2 = nRows > 12 ? 10 : nRows > 8 ? 11 : 13;
+    const rowH = Math.max(0.32, Math.min(0.52, availH / nRows));
+
+    const headerRow = cols.map((c) => ({
+      text: String(c),
+      options: {
+        bold: true, color: "FFFFFF", fill: { color: hex(C.accent) },
+        fontFace: F.body, fontSize: fs2, align: "center", valign: "middle",
+      },
+    }));
+    const bodyRows = rows.map((r, ri) => {
+      const hot = highlight.has(ri);
+      const cells = Array.isArray(r) ? r : [r];
+      return cells.map((cell, ci) => ({
+        text: String(cell),
+        options: {
+          color: hot ? hex(C.accent) : hex(C.text),
+          bold: hot,
+          fill: { color: hex(hot ? C.accentSoft : ri % 2 ? C.panel : C.bg) },
+          fontFace: F.body, fontSize: fs2,
+          align: ci === 0 ? "left" : "center", valign: "middle",
+        },
+      }));
+    });
+
+    slide.addTable([headerRow, ...bodyRows], {
+      x: M, y: by, w: CW, colW, rowH,
+      border: { type: "solid", pt: 0.5, color: hex(C.line) },
+      valign: "middle", autoPage: false,
+    });
+    if (s.note) slide.addText(s.note, {
+      x: M, y: by + rowH * nRows + 0.1, w: CW, h: noteH,
+      fontFace: F.serif, fontSize: 12, color: hex(C.muted), align: "left", valign: "top",
+    });
+  },
+
   discussion(slide, s) {
     slide.background = { color: hex(C.panel) };
     slide.addText(s.title || "議論したいこと", {

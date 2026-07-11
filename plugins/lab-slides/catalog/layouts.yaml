@@ -51,6 +51,11 @@ layouts:
     when: 重要な数値を2〜4個だけ大書きして印象付ける。詳細な表は別スライドへ。
     deck: '{ "layout": "metrics", "header": "章名", "headline": "結果サマリ", "metrics": [{ "value": "-64%", "label": "推論レイテンシ" }, { "value": "+0.8", "label": "BLEU" }] }'
 
+  - id: table
+    category: result
+    when: 数値結果を行列の表で見せる(実験のacc/loss一覧・アブレーション等)。図が無く表が主役のとき。列は3〜6・行は最大10目安、超えるなら分割。highlight で重要行を強調(深紅)。
+    deck: '{ "layout": "table", "header": "章名", "headline": "主張見出し", "columns": ["除去列", "残", "mean", "base比", "判定"], "rows": [["noEar9Var", "8", "83.27", "-4.63", "最重要"], ["noPup", "9", "85.10", "-2.80", "重要"]], "highlight": [0, 1], "widths": [3, 1, 1.4, 1.4, 1.6], "note": "補足1行(任意)" }'
+
   - id: discussion
     category: lab
     when: 進捗報告の「議論したい点・詰まっている点」。質問を明確な問いの形で書く。
