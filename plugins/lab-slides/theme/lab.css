@@ -22,8 +22,10 @@
   padding: 64px 78px 54px;
 }
 
-/* 本文スライドは上揃え(内容量でタイトル位置が動かないように) */
-section { justify-content: flex-start; }
+/* 本文スライドは上揃え(内容量でタイトル位置が動かないように)
+ * GitHub系 default テーマは section を flex にしないため display:flex を明示。
+ * これがないと justify-content(縦配置)が全レイアウトで無効になる。 */
+section { display: flex; flex-direction: column; justify-content: flex-start; }
 
 /* ---- 章ヘッダー(上部固定)---- */
 header {
@@ -172,7 +174,9 @@ section .metric .label { color: var(--c-muted); font-size: 0.62em; margin-top: 1
 
 /* ---- table: 表(数値結果の一覧) ---- */
 section.table h2 { text-align: left; }
-section.table table { width: 94%; margin: 0.5em auto 0; font-size: 0.66em; }
+/* default テーマの `table{display:block;width:max-content}` は id 付きセレクタで
+ * 高詳細度になり margin:auto に勝つ。flex の align-self で確実に横中央にする。 */
+section.table table { align-self: center; max-width: 94%; margin: 0.6em 0 0; font-size: 0.66em; }
 section.table thead th {
   background: var(--c-accent); color: #fff; font-weight: 600;
   border: none; padding: 7px 12px; text-align: center;
@@ -181,7 +185,7 @@ section.table tbody td { padding: 5px 12px; border-bottom: 1px solid var(--c-lin
 section.table tbody td:first-child { text-align: left; }
 section.table tbody tr:nth-child(even) td { background: var(--c-panel); }
 section.table tbody strong { color: var(--c-accent); }
-section.table .note { color: var(--c-muted); font-size: 0.6em; font-family: var(--font-serif); margin-top: 0.6em; }
+section.table .note { align-self: center; max-width: 94%; margin: 0.6em 0 0; color: var(--c-muted); font-size: 0.6em; font-family: var(--font-serif); }
 
 /* ---- discussion ---- */
 section.discussion { background: var(--c-panel); }

@@ -25,7 +25,10 @@ function slideMd(s, idx) {
   const cls = s.layout === "plain" || s.layout === "two-col" ? null : s.layout;
   const dir = [];
   if (cls) dir.push(`<!-- _class: ${cls} -->`);
-  if (!noHeader.has(s.layout) && s.header) dir.push(`<!-- header: ${esc(s.header)} -->`);
+  // Marp の header は持続指定。noHeader レイアウトでは _header を空にして
+  // そのスライドだけ前章の header を消す(次の本文スライドが自分の header を再設定)。
+  if (noHeader.has(s.layout)) dir.push(`<!-- _header: '' -->`);
+  else if (s.header) dir.push(`<!-- header: ${esc(s.header)} -->`);
   const head = dir.join("\n");
 
   let body = "";
