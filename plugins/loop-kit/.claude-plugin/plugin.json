@@ -1,6 +1,6 @@
 {
   "name": "loop-kit",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "ループエンジニアリング支援システム。曖昧なタスクの仕様決め→ループプロンプト設計→実行(セッション内Stop hook / 外側シェルループ / ファンアウト)→振り返りまでを型化する。",
   "author": {
     "name": "Haruki Sugimoto",

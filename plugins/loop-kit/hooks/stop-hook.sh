@@ -30,6 +30,19 @@ ITERATION=$(echo "$FRONTMATTER" | grep '^iteration:' | sed 's/iteration: *//')
 MAX_ITERATIONS=$(echo "$FRONTMATTER" | grep '^max_iterations:' | sed 's/max_iterations: *//')
 COMPLETION_PROMISE=$(echo "$FRONTMATTER" | grep '^completion_promise:' | sed 's/completion_promise: *//' | sed 's/^"\(.*\)"$/\1/')
 
+# セッション所有権チェック: このループを起動した本人セッションだけを対象にする。
+# Stop hook は同じ cwd で動く全セッションの終了で発火するため、所有者を照合しないと
+# 無関係なセッションまで block してループプロンプトを再投入してしまう(誤爆)。
+# 所有者未確定(空)のときは、起動直後に最初に停止する本人セッションが下の
+# atomic 更新で claim する。
+SESSION_ID=$(echo "$HOOK_INPUT" | jq -r '.session_id // empty')
+OWNER_SESSION=$(echo "$FRONTMATTER" | grep '^session_id:' | sed 's/session_id: *//' | sed 's/^"\(.*\)"$/\1/' || echo "")
+
+if [[ -n "$OWNER_SESSION" ]] && [[ "$OWNER_SESSION" != "null" ]] && [[ "$OWNER_SESSION" != "$SESSION_ID" ]]; then
+  # 別セッションのループ。状態ファイルには一切触れず素通りする。
+  exit 0
+fi
+
 # 数値フィールドの検証(壊れた状態ファイルは削除して停止)
 if [[ ! "$ITERATION" =~ ^[0-9]+$ ]] || [[ ! "$MAX_ITERATIONS" =~ ^[0-9]+$ ]]; then
   echo "⚠️  loop-kit: 状態ファイルが壊れています($STATE_FILE)。ループを停止します。/loop-run で再開できます。" >&2
@@ -96,9 +109,12 @@ if [[ -z "$PROMPT_TEXT" ]]; then
   exit 0
 fi
 
-# イテレーション数を更新(atomic に置換)
+# イテレーション数を更新(atomic に置換)。同時に session_id を本人のIDに確定(claim)し、
+# 以後は別セッションの Stop がこのファイルを block しないようにする。
 TEMP_FILE="${STATE_FILE}.tmp.$$"
-sed "s/^iteration: .*/iteration: $NEXT_ITERATION/" "$STATE_FILE" > "$TEMP_FILE"
+sed -e "s/^iteration: .*/iteration: $NEXT_ITERATION/" \
+    -e "s/^session_id: .*/session_id: \"$SESSION_ID\"/" \
+    "$STATE_FILE" > "$TEMP_FILE"
 mv "$TEMP_FILE" "$STATE_FILE"
 
 if [[ "$COMPLETION_PROMISE" != "null" ]] && [[ -n "$COMPLETION_PROMISE" ]]; then
