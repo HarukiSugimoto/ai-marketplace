@@ -67,6 +67,29 @@ function bulletsText(bullets) {
     options: { bullet: { code: "2022", indent: 18 }, color: hex(C.text), fontSize: 17, paraSpaceAfter: 8 },
   }));
 }
+// 点列から連続重複点と共線の中間点(3点が一直線)を除去。エルボー経路の整形用。
+function dedupePts(pts) {
+  const out = [];
+  for (const p of pts) {
+    const last = out[out.length - 1];
+    if (!last || Math.abs(last.x - p.x) > 1e-6 || Math.abs(last.y - p.y) > 1e-6) out.push(p);
+  }
+  if (out.length <= 2) return out;
+  const res = [out[0]];
+  for (let i = 1; i < out.length - 1; i++) {
+    const a = res[res.length - 1], b = out[i], c = out[i + 1];
+    const cross = (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    if (Math.abs(cross) > 1e-6) res.push(b);   // 一直線でなければ折れ点として残す
+  }
+  res.push(out[out.length - 1]);
+  return res;
+}
+// flow レイアウト共通: variant → ノードの塗り/枠/見出し色(すべて tokens 由来)
+const FLOW_VARIANT = {
+  neutral: { fill: C.white, line: C.line, title: C.text },
+  frozen:  { fill: C.panel, line: C.muted, title: C.text },
+  accent:  { fill: C.accentSoft, line: C.accent, title: C.accent },
+};
 
 // ---- レイアウトごとの図形レシピ ----
 const RECIPES = {
@@ -299,6 +322,138 @@ const RECIPES = {
         color: hex(C.text), valign: "middle",
       });
     }
+  },
+
+  // flow: 矩形/楕円/菱形ノード + 矢印コネクタ + グループ囲み + 自由ラベルからなる
+  // 汎用ダイアグラム。正規化座標(0〜1)を見出し下のコンテンツ領域に写像し、
+  // 本物の図形(roundRect/ellipse/diamond/line/text)で描くので PowerPoint で編集可能。
+  flow(slide, s) {
+    slide.background = { color: hex(C.bg) };
+    const by = addHeadline(slide, s.headline);
+    const noteH = s.note ? 0.45 : 0;
+    const R = { x: M, y: by, w: CW, h: S.h - by - 0.5 - noteH };   // 描画領域(絶対座標)
+    const AX = (v) => R.x + v * R.w;      // 正規化 → 絶対(x)
+    const AY = (v) => R.y + v * R.h;      // 正規化 → 絶対(y)
+
+    const SHAPES = {
+      rect: pptx.ShapeType.rect, roundRect: pptx.ShapeType.roundRect,
+      ellipse: pptx.ShapeType.ellipse, diamond: pptx.ShapeType.diamond,
+    };
+    const nodes = s.nodes || [];
+    const byId = {};
+    nodes.forEach((n) => { byId[n.id] = n; });
+    const box = (n) => ({ x: AX(n.x), y: AY(n.y), w: n.w * R.w, h: n.h * R.h });
+    const center = (b) => ({ x: b.x + b.w / 2, y: b.y + b.h / 2 });
+    const anchor = (b, side) => {
+      const c = center(b);
+      if (side === "top") return { x: c.x, y: b.y };
+      if (side === "bottom") return { x: c.x, y: b.y + b.h };
+      if (side === "left") return { x: b.x, y: c.y };
+      if (side === "right") return { x: b.x + b.w, y: c.y };
+      return c;
+    };
+    // 接続辺の自動選択: 2ノード中心の相対位置で、支配的な軸の対向辺どうしをつなぐ
+    const autoSides = (ba, bb) => {
+      const ca = center(ba), cb = center(bb);
+      const dx = cb.x - ca.x, dy = cb.y - ca.y;
+      if (Math.abs(dx) >= Math.abs(dy)) return dx >= 0 ? ["right", "left"] : ["left", "right"];
+      return dy >= 0 ? ["bottom", "top"] : ["top", "bottom"];
+    };
+
+    // 1) グループ囲み枠(最背面)
+    (s.groups || []).forEach((g) => {
+      const v = FLOW_VARIANT[g.variant] || FLOW_VARIANT.frozen;
+      slide.addShape(pptx.ShapeType.roundRect, {
+        x: AX(g.x), y: AY(g.y), w: g.w * R.w, h: g.h * R.h, rectRadius: 0.06,
+        fill: { color: hex(v.fill), transparency: 55 },
+        line: { color: hex(v.line), width: 1, dashType: "dash" },
+      });
+      if (g.label) slide.addText(g.label, {
+        x: AX(g.x) + 0.1, y: AY(g.y) + 0.05, w: g.w * R.w - 0.2, h: 0.3,
+        fontFace: F.body, fontSize: 11, bold: true, color: hex(v.line),
+        align: "left", valign: "top", charSpacing: 1,
+      });
+    });
+
+    // 2) エッジ(ノードより先に描く = ノードの塗りが端点を隠す)
+    (s.edges || []).forEach((e) => {
+      const na = byId[e.from], nb = byId[e.to];
+      if (!na || !nb) return;
+      const ba = box(na), bb = box(nb);
+      let sideA = e.fromSide, sideB = e.toSide;
+      if (!sideA || sideA === "auto" || !sideB || sideB === "auto") {
+        const [sa, sb] = autoSides(ba, bb);
+        if (!sideA || sideA === "auto") sideA = sa;
+        if (!sideB || sideB === "auto") sideB = sb;
+      }
+      const start = anchor(ba, sideA), end = anchor(bb, sideB);
+      let pts;
+      if (Array.isArray(e.waypoints) && e.waypoints.length) {
+        pts = [start, ...e.waypoints.map((w) => ({ x: AX(w.x), y: AY(w.y) })), end];
+      } else {
+        // 既定は直交エルボー: 出口の向き(水平/垂直)で折り返し点を作る
+        const horiz = sideA === "left" || sideA === "right";
+        pts = horiz
+          ? [start, { x: (start.x + end.x) / 2, y: start.y }, { x: (start.x + end.x) / 2, y: end.y }, end]
+          : [start, { x: start.x, y: (start.y + end.y) / 2 }, { x: end.x, y: (start.y + end.y) / 2 }, end];
+      }
+      pts = dedupePts(pts);
+      const dash = e.style === "dashed" ? "dash" : e.style === "dotted" ? "sysDot" : "solid";
+      const arrow = e.arrow || "end";
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p1 = pts[i], p2 = pts[i + 1];
+        const line = { color: hex(C.muted), width: 1.5, dashType: dash };
+        if (i === pts.length - 2 && (arrow === "end" || arrow === "both")) line.endArrowType = "triangle";
+        if (i === 0 && (arrow === "begin" || arrow === "both")) line.beginArrowType = "triangle";
+        slide.addShape(pptx.ShapeType.line, {
+          x: Math.min(p1.x, p2.x), y: Math.min(p1.y, p2.y),
+          w: Math.abs(p2.x - p1.x), h: Math.abs(p2.y - p1.y),
+          flipH: p2.x < p1.x, flipV: p2.y < p1.y, line,
+        });
+      }
+      if (e.label) {
+        const mid = pts[Math.floor((pts.length - 1) / 2)];
+        slide.addText(e.label, {
+          x: mid.x - 0.9, y: mid.y - 0.18, w: 1.8, h: 0.36,
+          fontFace: F.body, fontSize: 10, color: hex(C.muted),
+          align: "center", valign: "middle", fill: { color: hex(C.bg) },
+        });
+      }
+    });
+
+    // 3) ノード(図形 + 中央寄せテキスト)
+    nodes.forEach((n) => {
+      const b = box(n);
+      const v = FLOW_VARIANT[n.variant] || FLOW_VARIANT.neutral;
+      const shape = SHAPES[n.shape] || SHAPES.roundRect;
+      slide.addShape(shape, {
+        x: b.x, y: b.y, w: b.w, h: b.h, rectRadius: 0.08,
+        fill: { color: hex(v.fill) }, line: { color: hex(v.line), width: 1.25 },
+      });
+      const txt = [];
+      if (n.title) txt.push({ text: n.title, options: { bold: true, fontSize: 13, color: hex(v.title), breakLine: true } });
+      (n.lines || []).forEach((l) => txt.push({ text: l, options: { fontSize: 10.5, color: hex(C.text), breakLine: true } }));
+      if (txt.length) slide.addText(txt, {
+        x: b.x + 0.08, y: b.y, w: b.w - 0.16, h: b.h,
+        align: "center", valign: "middle", fontFace: F.body,
+      });
+    });
+
+    // 4) 自由ラベル(枠なしテキスト: 注記・式・凡例)
+    (s.labels || []).forEach((l) => {
+      const color = l.variant === "accent" ? C.accent : l.variant === "muted" ? C.muted : C.text;
+      slide.addText(l.text || "", {
+        x: AX(l.x), y: AY(l.y), w: (l.w || 0.3) * R.w, h: (l.h || 0.08) * R.h,
+        fontFace: l.serif ? F.serif : F.body, fontSize: l.size || 12, color: hex(color),
+        bold: !!l.bold, align: l.align || "center", valign: "middle",
+      });
+    });
+
+    // 5) note(領域下・任意)
+    if (s.note) slide.addText(s.note, {
+      x: M, y: S.h - 0.5 - noteH + 0.05, w: CW, h: noteH,
+      fontFace: F.serif, fontSize: 12, color: hex(C.muted), align: "left", valign: "top",
+    });
   },
 };
 

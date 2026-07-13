@@ -198,6 +198,23 @@ section.discussion ol li {
   list-style-position: inside;
 }
 
+/* ---- flow: 図形ダイアグラム(pptx と同座標のインライン SVG)---- */
+section.flow h2 { text-align: left; }
+section.flow .flow-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 80%;
+  margin: 0.3em auto 0;
+}
+section.flow .flow-note {
+  align-self: flex-start;
+  color: var(--c-muted);
+  font-size: 0.6em;
+  font-family: var(--font-serif);
+  margin-top: 0.5em;
+}
+
 /* ---- takeaway ---- */
 section .takeaway {
   background: var(--c-bg);

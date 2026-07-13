@@ -66,7 +66,16 @@ layouts:
     when: まとめスライド。要点の箇条書き + 持ち帰ってほしい1文を message に。
     deck: '{ "layout": "takeaway", "header": "章名", "headline": "まとめ", "bullets": ["要点1", "要点2"], "message": "提案手法は精度を保ったまま推論を64%高速化する" }'
 
+  - id: flow
+    category: diagram
+    when: フロー図・アーキ図・パイプライン・状態遷移・決定木など「ノード＋矢印」の図。pptx で本物の図形(編集可能)として描く。ノード配置は正規化座標(0〜1・見出し下の領域基準)で指定。写真・数式が主役なら figure-full(画像)を使う。
+    deck: '{ "layout": "flow", "header": "章名", "headline": "主張見出し(文で)", "groups": [{ "x": 0.13, "y": 0.02, "w": 0.22, "h": 0.96, "label": "凍結ブランチ", "variant": "frozen" }], "nodes": [{ "id": "in", "x": 0.0, "y": 0.4, "w": 0.1, "h": 0.2, "shape": "ellipse", "variant": "neutral", "title": "入力" }, { "id": "enc", "x": 0.15, "y": 0.4, "w": 0.18, "h": 0.2, "shape": "roundRect", "variant": "frozen", "title": "Encoder", "lines": ["ST-GCN", "→ (B,128)"] }, { "id": "head", "x": 0.42, "y": 0.4, "w": 0.18, "h": 0.2, "shape": "roundRect", "variant": "accent", "title": "Head (trained)" }, { "id": "out", "x": 0.7, "y": 0.4, "w": 0.16, "h": 0.2, "shape": "roundRect", "variant": "accent", "title": "出力 0/1" }], "edges": [{ "from": "in", "to": "enc", "arrow": "end", "style": "solid" }, { "from": "enc", "to": "head", "label": "embed" }, { "from": "head", "to": "out", "fromSide": "right", "toSide": "left" }], "labels": [{ "x": 0.0, "y": 0.9, "w": 1.0, "h": 0.08, "text": "凡例テキスト", "variant": "muted", "align": "left" }], "note": "補足1行(任意)" }'
+    # ノード variant: neutral(白/line枠) / frozen(panel塗り/muted枠) / accent(accentSoft塗り/accent枠)。すべて tokens.json 由来。
+    # ノード shape: rect / roundRect(既定) / ellipse(端子) / diamond(判断)。
+    # edge: arrow(end 既定 / both / begin / none)、style(solid / dashed / dotted)、label(線中点)、
+    #       fromSide/toSide(auto 既定 | top | bottom | left | right)、waypoints([{x,y}…]で直交ルート明示)。
+    # groups: ノード群を囲む背景枠(x/y/w/h/label/variant)。labels: 枠なし自由テキスト(注記・式・凡例)。
+
 # 数式・複雑な図の扱い:
-#   PowerPoint の図形では数式・込み入った図は表現できないため、画像として貼る
-#   (figure-full / two-col の image に PNG を指定)。この画像部分は pptx では編集不可。
-#   数式が主役のスライドは figure-full に数式画像を置く運用。
+#   数式や写真・込み入った図は画像として貼る(figure-full / two-col の image に PNG)。この画像部分は pptx では編集不可。
+#   一方でフロー図・アーキ図など「ノード＋矢印」の図は flow レイアウトで本物の図形として描けば pptx でも編集可能。

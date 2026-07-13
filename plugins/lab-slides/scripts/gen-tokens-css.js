@@ -17,6 +17,7 @@ const css = `/* 自動生成: tokens.json から。手で編集しないこと(�
   --c-accent-soft: #${c.accentSoft};
   --c-panel: #${c.panel};
   --c-line: #${c.line};
+  --c-white: #${c.white};
   --font-serif: '${f.serif}', 'Yu Mincho', 'Noto Serif JP', serif;
   --font-body: '${f.body}', 'Noto Sans JP', sans-serif;
 }

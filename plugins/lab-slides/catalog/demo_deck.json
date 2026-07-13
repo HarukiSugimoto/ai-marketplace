@@ -2,7 +2,7 @@
   "meta": { "title": "lab-slides レイアウトカタログ デモ", "type": "conference" },
   "slides": [
     { "layout": "title", "title": "lab-slides レイアウトカタログ デモ", "meta": "Haruki Sugimoto ・ ai-marketplace / lab-slides v0.1.0" },
-    { "layout": "toc", "title": "目次", "items": ["説明レイアウト", "比較・結果レイアウト", "研究特有レイアウト"], "current": 1 },
+    { "layout": "toc", "title": "目次", "items": ["説明レイアウト", "比較・結果レイアウト", "図形ダイアグラム", "研究特有レイアウト"], "current": 1 },
     { "layout": "section", "title": "説明レイアウト" },
     { "layout": "plain", "header": "説明レイアウト", "headline": "plain: 既定レイアウト(1枚1メッセージ)",
       "bullets": ["見出しは体言止めでなく主張文で書く", "箇条書きは最大5項目", "上部に現在章が固定表示される(章ヘッダー)"] },
@@ -27,6 +27,51 @@
       ],
       "highlight": [0, 1], "widths": [3, 1, 1.4, 1.4, 1.6],
       "note": "各行は当該要素を除いた条件。mean は3seed平均、base比はbaselineとの差。" },
+    { "layout": "section", "title": "図形ダイアグラム" },
+    { "layout": "flow", "header": "図形ダイアグラム", "headline": "flow: 一般フローチャート(判断ノードと分岐)",
+      "nodes": [
+        { "id": "start", "x": 0.0,  "y": 0.4,  "w": 0.13, "h": 0.2,  "shape": "ellipse",   "variant": "neutral", "title": "開始" },
+        { "id": "fetch", "x": 0.19, "y": 0.4,  "w": 0.16, "h": 0.2,  "shape": "roundRect", "variant": "neutral", "title": "データ取得" },
+        { "id": "dec",   "x": 0.42, "y": 0.33, "w": 0.16, "h": 0.34, "shape": "diamond",   "variant": "accent",  "title": "有効?" },
+        { "id": "save",  "x": 0.66, "y": 0.4,  "w": 0.16, "h": 0.2,  "shape": "roundRect", "variant": "neutral", "title": "整形・保存" },
+        { "id": "done",  "x": 0.88, "y": 0.4,  "w": 0.12, "h": 0.2,  "shape": "ellipse",   "variant": "frozen",  "title": "完了" },
+        { "id": "retry", "x": 0.42, "y": 0.78, "w": 0.16, "h": 0.2,  "shape": "rect",      "variant": "frozen",  "title": "再取得" }
+      ],
+      "edges": [
+        { "from": "start", "to": "fetch" },
+        { "from": "fetch", "to": "dec" },
+        { "from": "dec", "to": "save", "label": "Yes" },
+        { "from": "save", "to": "done" },
+        { "from": "dec", "to": "retry", "fromSide": "bottom", "toSide": "top", "label": "No" },
+        { "from": "retry", "to": "fetch", "fromSide": "left", "toSide": "bottom", "style": "dashed" }
+      ],
+      "note": "菱形=判断、楕円=開始/終了、破線=リトライ経路。すべて編集可能な図形として出力される。" },
+    { "layout": "flow", "header": "図形ダイアグラム", "headline": "flow: アーキ/パイプライン図(グループ枠・補助出力つき)",
+      "groups": [
+        { "x": 0.13, "y": 0.0, "w": 0.2, "h": 1.0, "label": "凍結ブランチ (ST-GCN)", "variant": "frozen" }
+      ],
+      "nodes": [
+        { "id": "in",    "x": 0.0,  "y": 0.44, "w": 0.1,  "h": 0.16, "shape": "ellipse",   "variant": "neutral", "title": "入力", "lines": ["動画フレーム"] },
+        { "id": "eye",   "x": 0.14, "y": 0.1,  "w": 0.18, "h": 0.17, "shape": "roundRect", "variant": "frozen",  "title": "EYE (凍結)",   "lines": ["左目+瞳孔9ノード", "→ (B,128)"] },
+        { "id": "mouth", "x": 0.14, "y": 0.43, "w": 0.18, "h": 0.17, "shape": "roundRect", "variant": "frozen",  "title": "MOUTH (凍結)", "lines": ["口 20ノード", "→ (B,128)"] },
+        { "id": "head",  "x": 0.14, "y": 0.76, "w": 0.18, "h": 0.17, "shape": "roundRect", "variant": "frozen",  "title": "HEAD (凍結)",  "lines": ["頭姿勢", "→ (B,128)"] },
+        { "id": "cat",   "x": 0.4,  "y": 0.41, "w": 0.13, "h": 0.17, "shape": "roundRect", "variant": "neutral", "title": "Concat", "lines": ["(B,384)"] },
+        { "id": "drow",  "x": 0.6,  "y": 0.41, "w": 0.18, "h": 0.17, "shape": "roundRect", "variant": "accent",  "title": "Drowsiness Head", "lines": ["(trained)"] },
+        { "id": "out",   "x": 0.84, "y": 0.41, "w": 0.16, "h": 0.17, "shape": "roundRect", "variant": "accent",  "title": "眠気 0/1", "lines": ["loss × 1.0"] },
+        { "id": "aux",   "x": 0.6,  "y": 0.77, "w": 0.32, "h": 0.2,  "shape": "roundRect", "variant": "frozen",  "title": "補助ヘッド eye/mouth/head", "lines": ["loss × 0.2"] }
+      ],
+      "edges": [
+        { "from": "in", "to": "eye",   "fromSide": "right", "toSide": "left" },
+        { "from": "in", "to": "mouth", "fromSide": "right", "toSide": "left" },
+        { "from": "in", "to": "head",  "fromSide": "right", "toSide": "left" },
+        { "from": "eye",   "to": "cat", "fromSide": "right", "toSide": "left" },
+        { "from": "mouth", "to": "cat", "fromSide": "right", "toSide": "left" },
+        { "from": "head",  "to": "cat", "fromSide": "right", "toSide": "left" },
+        { "from": "cat",  "to": "drow", "fromSide": "right", "toSide": "left" },
+        { "from": "drow", "to": "out",  "fromSide": "right", "toSide": "left" },
+        { "from": "cat",  "to": "aux",  "fromSide": "bottom", "toSide": "top", "style": "dashed", "label": "補助" }
+      ],
+      "note": "総損失 = drowsiness × 1.0 +(eye + mouth + head)× 0.2" },
     { "layout": "section", "title": "研究特有レイアウト" },
     { "layout": "discussion", "header": "研究特有レイアウト", "title": "議論したいこと",
       "items": ["○○の評価指標は△△で妥当か?", "実験規模を広げる前に□□を検証すべきか?"] },
