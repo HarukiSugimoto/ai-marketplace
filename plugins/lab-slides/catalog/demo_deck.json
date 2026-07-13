@@ -2,13 +2,16 @@
   "meta": { "title": "lab-slides レイアウトカタログ デモ", "type": "conference" },
   "slides": [
     { "layout": "title", "title": "lab-slides レイアウトカタログ デモ", "meta": "Haruki Sugimoto ・ ai-marketplace / lab-slides v0.1.0" },
-    { "layout": "toc", "title": "目次", "items": ["説明レイアウト", "比較・結果レイアウト", "図形ダイアグラム", "研究特有レイアウト"], "current": 1 },
+    { "layout": "toc", "title": "目次", "items": ["説明レイアウト", "比較・結果レイアウト", "パネル・格子", "図形ダイアグラム", "研究特有レイアウト"], "current": 1 },
     { "layout": "section", "title": "説明レイアウト" },
     { "layout": "plain", "header": "説明レイアウト", "headline": "plain: 既定レイアウト(1枚1メッセージ)",
       "bullets": ["見出しは体言止めでなく主張文で書く", "箇条書きは最大5項目", "上部に現在章が固定表示される(章ヘッダー)"] },
     { "layout": "two-col", "header": "説明レイアウト", "headline": "two-col: 図と説明を並べる", "wide": true,
       "left": { "image": "nonexistent.png" },
       "right": { "bullets": ["図が主役なら wide で左を広く", "説明は短く、詳細は口頭で"] } },
+    { "layout": "two-col", "header": "説明レイアウト", "headline": "two-col: 片側に表・片側に解釈",
+      "left": { "table": { "columns": ["条件", "acc", "判定"], "rows": [["A", "0.83", "—"], ["B", "0.85", "最良"], ["C", "0.81", "劣"]], "highlight": [1] } },
+      "right": { "bullets": ["left/right には table も置ける", "表を左、読み取りを右に併置", "highlight 行は accent で強調"] } },
     { "layout": "section", "title": "比較・結果レイアウト" },
     { "layout": "compare", "header": "比較・結果レイアウト", "headline": "compare: ベースライン vs 提案手法",
       "baseline": { "title": "Transformer (baseline)", "bullets": ["推論: 120ms/token", "BLEU: 27.3"] },
@@ -27,6 +30,47 @@
       ],
       "highlight": [0, 1], "widths": [3, 1, 1.4, 1.4, 1.6],
       "note": "各行は当該要素を除いた条件。mean は3seed平均、base比はbaselineとの差。" },
+    { "layout": "table", "header": "比較・結果レイアウト", "headline": "table + compact: 行数の多い表を詰める",
+      "compact": true,
+      "columns": ["エポック", "train loss", "val loss", "val acc", "lr"],
+      "rows": [
+        ["1", "1.842", "1.677", "0.412", "1e-3"],
+        ["2", "1.203", "1.198", "0.588", "1e-3"],
+        ["3", "0.914", "0.972", "0.671", "1e-3"],
+        ["4", "0.742", "0.861", "0.719", "5e-4"],
+        ["5", "0.631", "0.802", "0.748", "5e-4"],
+        ["6", "0.558", "0.771", "0.766", "5e-4"],
+        ["7", "0.502", "0.759", "0.774", "2e-4"],
+        ["8", "0.471", "0.753", "0.779", "2e-4"]
+      ],
+      "highlight": [7],
+      "note": "compact:true で字と余白を縮小。8行超でも1枚に収まる。" },
+    { "layout": "section", "title": "パネル・格子" },
+    { "layout": "panels", "header": "パネル・格子", "headline": "panels: 異種ブロックを見出し付きで併置",
+      "widths": [1, 1],
+      "columns": [
+        [
+          { "title": "定量(アブレーション)", "table": { "columns": ["条件", "acc"], "rows": [["full", "0.88"], ["-eye", "0.83"], ["-mouth", "0.85"]], "highlight": [1] } }
+        ],
+        [
+          { "title": "定性所見", "bullets": ["eye 除去で誤検出が増加", "mouth は寄与が小さい", "推論は 43ms/frame"] },
+          { "title": "代表ケース", "image": "nonexistent.png" }
+        ]
+      ],
+      "note": "左=表・右=箇条書き+画像。各 panel は小見出し(下線)付き。" },
+    { "layout": "grid", "header": "パネル・格子", "headline": "grid: 小画像を格子に並べる(条件別サンプル)",
+      "cols": 4,
+      "items": [
+        { "image": "nonexistent.png", "caption": "条件A: 正面" },
+        { "image": "nonexistent.png", "caption": "条件B: 側面" },
+        { "image": "nonexistent.png", "caption": "条件C: 逆光" },
+        { "image": "nonexistent.png", "caption": "条件D: 夜間" },
+        { "image": "nonexistent.png", "caption": "条件E: 眼鏡" },
+        { "image": "nonexistent.png", "caption": "条件F: マスク" },
+        { "image": "nonexistent.png", "caption": "条件G: 横顔" },
+        { "image": "nonexistent.png", "caption": "条件H: 遠景" }
+      ],
+      "note": "cols で列数を指定。行は自動。各画像に任意でキャプション。" },
     { "layout": "section", "title": "図形ダイアグラム" },
     { "layout": "flow", "header": "図形ダイアグラム", "headline": "flow: 一般フローチャート(判断ノードと分岐)",
       "nodes": [

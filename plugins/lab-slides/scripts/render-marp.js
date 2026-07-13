@@ -24,6 +24,31 @@ const esc = (t) => (t == null ? "" : String(t));
 // SVG/HTML テキスト用のエスケープ(< & > がマークアップを壊さないように)
 const he = (t) => esc(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const bullets = (arr) => (arr || []).map((b) => `- ${esc(typeof b === "string" ? b : b.text)}`).join("\n");
+// マークダウンのパイプ表。two-col セルなど markdown が効く場所で使う。
+// t = { columns, rows, highlight }。highlight 行はセルを **太字**(CSS で accent 色)。
+function mdPipe(t) {
+  const cols = t.columns || [];
+  const hot = new Set(t.highlight || []);
+  const head = `| ${cols.map(esc).join(" | ")} |`;
+  const sep = `| ${cols.map(() => "---").join(" | ")} |`;
+  const rowLines = (t.rows || []).map((r, ri) => {
+    const cells = (Array.isArray(r) ? r : [r]).map(esc);
+    return `| ${cells.map((c) => (hot.has(ri) ? `**${c}**` : c)).join(" | ")} |`;
+  }).join("\n");
+  return `${head}\n${sep}\n${rowLines}`;
+}
+// HTML 表を直接生成。panels の入れ子 <div> 内は markdown が効かないので使う。
+// t = { columns, rows, highlight }。highlight 行に class="hot" を付ける。
+function htmlTable(t) {
+  const cols = t.columns || [];
+  const hot = new Set(t.highlight || []);
+  const thead = `<thead><tr>${cols.map((c) => `<th>${he(c)}</th>`).join("")}</tr></thead>`;
+  const tbody = `<tbody>${(t.rows || []).map((r, ri) => {
+    const cells = Array.isArray(r) ? r : [r];
+    return `<tr${hot.has(ri) ? ' class="hot"' : ""}>${cells.map((c) => `<td>${he(c)}</td>`).join("")}</tr>`;
+  }).join("")}</tbody>`;
+  return `<table>${thead}${tbody}</table>`;
+}
 
 // flow レイアウト: deck.json のノード/エッジ/グループ/ラベルをインライン SVG に描く。
 // render-pptx.js の flow レシピと同じ正規化座標→領域写像・同じ variant 色(CSS変数)を使い、
@@ -156,7 +181,8 @@ function flowSvg(s) {
 const noHeader = new Set(["title", "toc", "section"]);
 
 function slideMd(s, idx) {
-  const cls = s.layout === "plain" || s.layout === "two-col" ? null : s.layout;
+  let cls = s.layout === "plain" || s.layout === "two-col" ? null : s.layout;
+  if (s.layout === "table" && s.compact) cls = "table compact";   // 行数の多い表を詰める
   const dir = [];
   if (cls) dir.push(`<!-- _class: ${cls} -->`);
   // Marp の header は持続指定。noHeader レイアウトでは _header を空にして
@@ -182,9 +208,9 @@ function slideMd(s, idx) {
       break;
     case "two-col": {
       const L = s.left || {}, R = s.right || {};
-      const leftCell = L.image ? `![](${esc(L.image)})` : bullets(L.bullets);
-      const rightCell = R.bullets ? bullets(R.bullets) : (R.image ? `![](${esc(R.image)})` : "");
-      body = `## ${esc(s.headline)}\n\n<div class="cols${s.wide ? " w64" : ""}">\n<div>\n\n${leftCell}\n\n</div>\n<div>\n\n${rightCell}\n\n</div>\n</div>`;
+      // セルは image / table / bullets のいずれか。div 内はブロック要素前後の空行で markdown が効く。
+      const cell = (d) => d.image ? `![](${esc(d.image)})` : d.table ? mdPipe(d.table) : bullets(d.bullets);
+      body = `## ${esc(s.headline)}\n\n<div class="cols${s.wide ? " w64" : ""}">\n<div>\n\n${cell(L)}\n\n</div>\n<div>\n\n${cell(R)}\n\n</div>\n</div>`;
       break;
     }
     case "compare": {
@@ -200,16 +226,35 @@ function slideMd(s, idx) {
         (s.metrics || []).map((m) => `<div class="metric"><div class="value">${esc(m.value)}</div><div class="label">${esc(m.label)}</div></div>`).join("\n") +
         `\n</div>`;
       break;
-    case "table": {
-      const cols = s.columns || [];
-      const hot = new Set(s.highlight || []);
-      const head = `| ${cols.map(esc).join(" | ")} |`;
-      const sep = `| ${cols.map(() => "---").join(" | ")} |`;
-      const rowLines = (s.rows || []).map((r, ri) => {
-        const cells = (Array.isArray(r) ? r : [r]).map(esc);
-        return `| ${cells.map((c) => (hot.has(ri) ? `**${c}**` : c)).join(" | ")} |`;
-      }).join("\n");
-      body = `## ${esc(s.headline)}\n\n${head}\n${sep}\n${rowLines}` +
+    case "table":
+      body = `## ${esc(s.headline)}\n\n${mdPipe(s)}` +
+        (s.note ? `\n\n<div class="note">${esc(s.note)}</div>` : "");
+      break;
+    case "panels": {
+      // 各列は panel 配列(縦積み)。入れ子 div 内は markdown が効かないので中身は HTML 直生成。
+      const columns = s.columns || [];
+      const widths = (s.widths && s.widths.length === columns.length) ? s.widths : columns.map(() => 1);
+      const gridCols = widths.map((v) => `${v}fr`).join(" ");
+      const panelHtml = (p) => {
+        let inner = "";
+        if (p.table) inner = htmlTable(p.table);
+        else if (p.image) inner = `<img src="${esc(p.image)}">`;
+        else if (p.bullets) inner = `<ul>${(p.bullets || []).map((b) => `<li>${he(typeof b === "string" ? b : b.text)}</li>`).join("")}</ul>`;
+        const title = p.title ? `<div class="ptitle">${he(p.title)}</div>` : "";
+        return `<div class="panel">${title}${inner}</div>`;
+      };
+      const colHtml = columns.map((col) => `<div class="pcol">${(col || []).map(panelHtml).join("")}</div>`).join("");
+      body = `## ${esc(s.headline)}\n\n<div class="panelgrid" style="grid-template-columns:${gridCols}">${colHtml}</div>` +
+        (s.note ? `\n\n<div class="note">${esc(s.note)}</div>` : "");
+      break;
+    }
+    case "grid": {
+      const nCol = s.cols || 4;
+      const figs = (s.items || []).map((it) => {
+        const cap = it.caption ? `<figcaption>${he(it.caption)}</figcaption>` : "";
+        return `<figure><img src="${esc(it.image)}">${cap}</figure>`;
+      }).join("");
+      body = `## ${esc(s.headline)}\n\n<div class="grid" style="grid-template-columns:repeat(${nCol},1fr)">${figs}</div>` +
         (s.note ? `\n\n<div class="note">${esc(s.note)}</div>` : "");
       break;
     }

@@ -1,7 +1,7 @@
 {
   "name": "lab-slides",
   "displayName": "Lab Slides — 研究発表スライド生成",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "研究発表スライド(進捗報告・学会/修論)を段階生成するシステム。素材→content.yaml→outline.yaml→Marp Markdown→HTML確認→PDF の2関門パイプライン。レイアウトカタログとデザイントークンで一貫したデザインを保ち、/catalog-add で型を育てる。",
   "author": {
     "name": "Haruki Sugimoto",

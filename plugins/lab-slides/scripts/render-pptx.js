@@ -67,6 +67,84 @@ function bulletsText(bullets) {
     options: { bullet: { code: "2022", indent: 18 }, color: hex(C.text), fontSize: 17, paraSpaceAfter: 8 },
   }));
 }
+// 表を編集可能な図形(addTable)として (x,y,w,h) に描く共通ヘルパ。
+// table / two-col / panels から共用。t = { columns, rows, widths, highlight, compact }。
+// ヘッダ行=accent塗り白文字 / 偶数行=panel塗り / highlight行=accentSoft塗り+accent文字。
+// 戻り値は実際に使った高さ(note などを下に置くときの基準)。
+function addBoxTable(slide, t, x, y, w, h) {
+  const cols = t.columns || [];
+  const rows = t.rows || [];
+  const nCol = Math.max(cols.length, 1);
+  const highlight = new Set(t.highlight || []);
+
+  let colW;
+  if (Array.isArray(t.widths) && t.widths.length === nCol) {
+    const sum = t.widths.reduce((a, b) => a + b, 0);
+    colW = t.widths.map((v) => (w * v) / sum);
+  } else {
+    const firstW = w * (nCol <= 4 ? 0.4 : 0.32);
+    const restW = (w - firstW) / Math.max(nCol - 1, 1);
+    colW = cols.map((_, i) => (i === 0 ? firstW : restW));
+  }
+
+  const nRows = rows.length + 1;
+  const compact = !!t.compact;
+  const baseFs = nRows > 12 ? 10 : nRows > 8 ? 11 : 13;
+  const fs2 = compact ? Math.max(8, baseFs - 2) : baseFs;
+  const rowH = Math.max(compact ? 0.24 : 0.32, Math.min(compact ? 0.4 : 0.52, h / nRows));
+
+  const headerRow = cols.map((c) => ({
+    text: String(c),
+    options: {
+      bold: true, color: "FFFFFF", fill: { color: hex(C.accent) },
+      fontFace: F.body, fontSize: fs2, align: "center", valign: "middle",
+    },
+  }));
+  const bodyRows = rows.map((r, ri) => {
+    const hot = highlight.has(ri);
+    const cells = Array.isArray(r) ? r : [r];
+    return cells.map((cell, ci) => ({
+      text: String(cell),
+      options: {
+        color: hot ? hex(C.accent) : hex(C.text),
+        bold: hot,
+        fill: { color: hex(hot ? C.accentSoft : ri % 2 ? C.panel : C.bg) },
+        fontFace: F.body, fontSize: fs2,
+        align: ci === 0 ? "left" : "center", valign: "middle",
+      },
+    }));
+  });
+
+  slide.addTable([headerRow, ...bodyRows], {
+    x, y, w, colW, rowH,
+    border: { type: "solid", pt: 0.5, color: hex(C.line) },
+    valign: "middle", autoPage: false,
+  });
+  return rowH * nRows;
+}
+// panel: 小見出し(accent + 下線)+ 中身(table|image|bullets)を (x,y,w,h) に描く。
+// panels レイアウトの1ブロック。見出しが無ければ中身を上端から描く。
+function addPanel(slide, p, x, y, w, h) {
+  let cy = y;
+  if (p.title) {
+    slide.addText(p.title, {
+      x, y: cy, w, h: 0.34, fontFace: F.serif, fontSize: 14, bold: true,
+      color: hex(C.accent), align: "left", valign: "top",
+    });
+    slide.addShape(pptx.ShapeType.line, { x, y: cy + 0.38, w, h: 0, line: { color: hex(C.accent), width: 1 } });
+    cy += 0.5;
+  }
+  const ch = Math.max(0.2, h - (cy - y));
+  if (p.table) {
+    addBoxTable(slide, p.table, x, cy, w, ch);
+  } else if (p.image) {
+    const im = resolveImg(p.image);
+    if (im) slide.addImage({ path: im, x, y: cy, w, h: ch, sizing: { type: "contain", w, h: ch } });
+    else slide.addText("[画像なし: " + (p.image || "") + "]", { x, y: cy, w, h: ch, align: "center", valign: "middle", color: hex(C.muted), fontSize: 12 });
+  } else if (p.bullets) {
+    slide.addText(bulletsText(p.bullets), { x, y: cy, w, h: ch, valign: "top", fontFace: F.body });
+  }
+}
 // 点列から連続重複点と共線の中間点(3点が一直線)を除去。エルボー経路の整形用。
 function dedupePts(pts) {
   const out = [];
@@ -161,11 +239,19 @@ const RECIPES = {
     const rightW = S.w - M - rightX;
     const colH = S.h - by - 0.6;
     const L = s.left || {}, R = s.right || {};
-    const img = resolveImg(L.image);
-    if (img) slide.addImage({ path: img, x: M, y: by, w: leftW, h: colH, sizing: { type: "contain", w: leftW, h: colH } });
-    else if (L.bullets) slide.addText(bulletsText(L.bullets), { x: M, y: by, w: leftW, h: colH, valign: "top", fontFace: F.body });
-    if (R.bullets) slide.addText(bulletsText(R.bullets), { x: rightX, y: by, w: rightW, h: colH, valign: "middle", fontFace: F.body });
-    else if (R.image) { const ri = resolveImg(R.image); if (ri) slide.addImage({ path: ri, x: rightX, y: by, w: rightW, h: colH, sizing: { type: "contain", w: rightW, h: colH } }); }
+    // 各セルは image / table / bullets のいずれか。bullets の縦位置は側で変える(左=上, 右=中央)。
+    const cell = (d, cx, cw, bulletValign) => {
+      if (d.image) {
+        const im = resolveImg(d.image);
+        if (im) slide.addImage({ path: im, x: cx, y: by, w: cw, h: colH, sizing: { type: "contain", w: cw, h: colH } });
+      } else if (d.table) {
+        addBoxTable(slide, d.table, cx, by, cw, colH);
+      } else if (d.bullets) {
+        slide.addText(bulletsText(d.bullets), { x: cx, y: by, w: cw, h: colH, valign: bulletValign, fontFace: F.body });
+      }
+    };
+    cell(L, M, leftW, "top");
+    cell(R, rightX, rightW, "middle");
   },
 
   compare(slide, s) {
@@ -234,56 +320,85 @@ const RECIPES = {
   table(slide, s) {
     slide.background = { color: hex(C.bg) };
     const by = addHeadline(slide, s.headline);
-    const cols = s.columns || [];
-    const rows = s.rows || [];
-    const nCol = Math.max(cols.length, 1);
-    const highlight = new Set(s.highlight || []);
     const noteH = s.note ? 0.5 : 0;
     const availH = S.h - by - 0.6 - noteH;
+    const used = addBoxTable(slide, s, M, by, CW, availH);
+    if (s.note) slide.addText(s.note, {
+      x: M, y: by + used + 0.1, w: CW, h: noteH,
+      fontFace: F.serif, fontSize: 12, color: hex(C.muted), align: "left", valign: "top",
+    });
+  },
+
+  // panels: 見出し下領域を columns で横分割し、各列を panel 数で縦分割。
+  // 表・画像・箇条書きなど異種ブロックを小見出し付きで1枚に並べる。
+  panels(slide, s) {
+    slide.background = { color: hex(C.bg) };
+    const by = addHeadline(slide, s.headline);
+    const noteH = s.note ? 0.45 : 0;
+    const regionH = S.h - by - 0.6 - noteH;
+    const columns = s.columns || [];
+    const nCol = Math.max(columns.length, 1);
+    const gap = 0.4;
 
     let colW;
     if (Array.isArray(s.widths) && s.widths.length === nCol) {
       const sum = s.widths.reduce((a, b) => a + b, 0);
-      colW = s.widths.map((x) => (CW * x) / sum);
+      colW = s.widths.map((v) => ((CW - gap * (nCol - 1)) * v) / sum);
     } else {
-      const firstW = CW * (nCol <= 4 ? 0.4 : 0.32);
-      const restW = (CW - firstW) / Math.max(nCol - 1, 1);
-      colW = cols.map((_, i) => (i === 0 ? firstW : restW));
+      colW = columns.map(() => (CW - gap * (nCol - 1)) / nCol);
     }
 
-    const nRows = rows.length + 1;
-    const fs2 = nRows > 12 ? 10 : nRows > 8 ? 11 : 13;
-    const rowH = Math.max(0.32, Math.min(0.52, availH / nRows));
-
-    const headerRow = cols.map((c) => ({
-      text: String(c),
-      options: {
-        bold: true, color: "FFFFFF", fill: { color: hex(C.accent) },
-        fontFace: F.body, fontSize: fs2, align: "center", valign: "middle",
-      },
-    }));
-    const bodyRows = rows.map((r, ri) => {
-      const hot = highlight.has(ri);
-      const cells = Array.isArray(r) ? r : [r];
-      return cells.map((cell, ci) => ({
-        text: String(cell),
-        options: {
-          color: hot ? hex(C.accent) : hex(C.text),
-          bold: hot,
-          fill: { color: hex(hot ? C.accentSoft : ri % 2 ? C.panel : C.bg) },
-          fontFace: F.body, fontSize: fs2,
-          align: ci === 0 ? "left" : "center", valign: "middle",
-        },
-      }));
+    let cx = M;
+    columns.forEach((panels, ci) => {
+      const w = colW[ci];
+      const nP = Math.max(panels.length, 1);
+      const pGap = 0.3;
+      const pH = (regionH - pGap * (nP - 1)) / nP;
+      panels.forEach((p, pi) => {
+        addPanel(slide, p, cx, by + pi * (pH + pGap), w, pH);
+      });
+      cx += w + gap;
     });
 
-    slide.addTable([headerRow, ...bodyRows], {
-      x: M, y: by, w: CW, colW, rowH,
-      border: { type: "solid", pt: 0.5, color: hex(C.line) },
-      valign: "middle", autoPage: false,
-    });
     if (s.note) slide.addText(s.note, {
-      x: M, y: by + rowH * nRows + 0.1, w: CW, h: noteH,
+      x: M, y: S.h - 0.6 - noteH + 0.15, w: CW, h: noteH,
+      fontFace: F.serif, fontSize: 12, color: hex(C.muted), align: "left", valign: "top",
+    });
+  },
+
+  // grid: 小さい画像を cols×rows の格子に contain 配置(任意でキャプション)。
+  grid(slide, s) {
+    slide.background = { color: hex(C.bg) };
+    const by = addHeadline(slide, s.headline);
+    const noteH = s.note ? 0.45 : 0;
+    const regionH = S.h - by - 0.6 - noteH;
+    const items = s.items || [];
+    const nCol = Math.max(s.cols || 4, 1);
+    const nRow = Math.max(Math.ceil(items.length / nCol), 1);
+    const gap = 0.3, capH = 0.35;
+    const cellW = (CW - gap * (nCol - 1)) / nCol;
+    const cellH = (regionH - gap * (nRow - 1)) / nRow;
+
+    items.forEach((it, i) => {
+      const r = Math.floor(i / nCol), c = i % nCol;
+      const x = M + c * (cellW + gap);
+      const y = by + r * (cellH + gap);
+      const imgH = it.caption ? cellH - capH : cellH;
+      const im = resolveImg(it.image);
+      if (im) {
+        slide.addImage({ path: im, x, y, w: cellW, h: imgH, sizing: { type: "contain", w: cellW, h: imgH } });
+      } else {
+        slide.addShape(pptx.ShapeType.rect, { x, y, w: cellW, h: imgH, fill: { color: hex(C.panel) }, line: { color: hex(C.line), width: 1 } });
+        slide.addText("[画像なし]", { x, y, w: cellW, h: imgH, align: "center", valign: "middle", color: hex(C.muted), fontSize: 10 });
+      }
+      if (it.caption) slide.addText(it.caption, {
+        x, y: y + imgH, w: cellW, h: capH, fontFace: F.serif, fontSize: 10,
+        color: hex(C.muted), align: "center", valign: "top",
+      });
+    });
+
+    if (s.note) slide.addText(s.note, {
+      x: M, y: S.h - 0.6 - noteH + 0.15, w: CW, h: noteH,
       fontFace: F.serif, fontSize: 12, color: hex(C.muted), align: "left", valign: "top",
     });
   },

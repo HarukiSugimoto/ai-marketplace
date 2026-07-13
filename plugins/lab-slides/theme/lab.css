@@ -138,6 +138,16 @@ section.section h1::after { content: ' —'; color: var(--c-accent); }
 /* ---- two-col ---- */
 section .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: center; }
 section .cols.w64 { grid-template-columns: 6fr 4fr; }
+/* two-col セルに置いた表(left/right の table)。表主体の列を全幅で見せる。 */
+section .cols table { display: table; width: 100%; margin: 0; font-size: 0.62em; border-collapse: collapse; }
+section .cols thead th {
+  background: var(--c-accent); color: #fff; font-weight: 600;
+  border: none; padding: 5px 11px; text-align: center;
+}
+section .cols tbody td { padding: 4px 11px; border-bottom: 1px solid var(--c-line); text-align: center; }
+section .cols tbody td:first-child { text-align: left; }
+section .cols tbody tr:nth-child(even) td { background: var(--c-panel); }
+section .cols tbody strong { color: var(--c-accent); }
 
 /* ---- compare ---- */
 section.compare .cols { align-items: stretch; gap: 26px; }
@@ -186,6 +196,10 @@ section.table tbody td:first-child { text-align: left; }
 section.table tbody tr:nth-child(even) td { background: var(--c-panel); }
 section.table tbody strong { color: var(--c-accent); }
 section.table .note { align-self: center; max-width: 94%; margin: 0.6em 0 0; color: var(--c-muted); font-size: 0.6em; font-family: var(--font-serif); }
+/* compact: 行数の多い表で字・余白を詰める(pptx 側は行数で自動縮小) */
+section.table.compact table { font-size: 0.54em; }
+section.table.compact thead th { padding: 4px 9px; }
+section.table.compact tbody td { padding: 3px 9px; }
 
 /* ---- discussion ---- */
 section.discussion { background: var(--c-panel); }
@@ -214,6 +228,37 @@ section.flow .flow-note {
   font-family: var(--font-serif);
   margin-top: 0.5em;
 }
+
+/* ---- panels: 異種ブロック(表/画像/箇条書き)を見出し付きで1枚に並べる ---- */
+section.panels h2 { text-align: left; }
+section.panels .panelgrid { display: grid; gap: 30px; align-items: start; }
+section.panels .pcol { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+section.panels .ptitle {
+  font-family: var(--font-serif); font-weight: 600; color: var(--c-accent);
+  font-size: 0.78em; letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--c-accent);
+  padding-bottom: 4px; margin-bottom: 10px;
+}
+section.panels .panel table { display: table; width: 100%; margin: 0; font-size: 0.56em; border-collapse: collapse; }
+section.panels .panel thead th {
+  background: var(--c-accent); color: #fff; font-weight: 600;
+  border: none; padding: 4px 9px; text-align: center;
+}
+section.panels .panel tbody td { padding: 3px 9px; border-bottom: 1px solid var(--c-line); text-align: center; }
+section.panels .panel tbody td:first-child { text-align: left; }
+section.panels .panel tbody tr:nth-child(even) td { background: var(--c-panel); }
+section.panels .panel tbody tr.hot td { background: var(--c-accent-soft); color: var(--c-accent); font-weight: 600; }
+section.panels .panel ul { margin: 0; font-size: 0.78em; }
+section.panels .panel img { margin: 0; max-height: 2.6in; max-width: 100%; }
+section.panels .note { color: var(--c-muted); font-size: 0.6em; font-family: var(--font-serif); margin-top: 0.6em; }
+
+/* ---- grid: 小さい画像を格子配置(エッジ設計カタログ等)---- */
+section.grid h2 { text-align: left; }
+section.grid .grid { display: grid; gap: 18px; align-items: start; margin-top: 0.4em; }
+section.grid figure { margin: 0; text-align: center; }
+section.grid figure img { margin: 0 auto; max-height: 2.2in; max-width: 100%; border: 1px solid var(--c-line); }
+section.grid figcaption { color: var(--c-muted); font-size: 0.55em; font-family: var(--font-serif); margin-top: 6px; line-height: 1.4; }
+section.grid .note { color: var(--c-muted); font-size: 0.6em; font-family: var(--font-serif); margin-top: 0.6em; }
 
 /* ---- takeaway ---- */
 section .takeaway {

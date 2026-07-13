@@ -33,8 +33,8 @@ layouts:
 
   - id: two-col
     category: explain
-    when: 図と説明を並べる。left に図・right に説明。図が主役なら wide:true で左を広く。
-    deck: '{ "layout": "two-col", "header": "章名", "headline": "見出し", "wide": true, "left": { "image": "figures/arch.png" }, "right": { "bullets": ["ポイント1", "ポイント2"] } }'
+    when: 図と説明を並べる。left に図・right に説明。図が主役なら wide:true で左を広く。left/right のセルは image / bullets のほか table(columns/rows/highlight/widths)も置ける(片側に表・片側に解釈を並べるとき)。
+    deck: '{ "layout": "two-col", "header": "章名", "headline": "見出し", "wide": true, "left": { "table": { "columns": ["条件", "acc"], "rows": [["A", "0.83"], ["B", "0.85"]], "highlight": [1] } }, "right": { "bullets": ["Bが最良", "差は有意"] } }'
 
   - id: compare
     category: compare
@@ -53,8 +53,18 @@ layouts:
 
   - id: table
     category: result
-    when: 数値結果を行列の表で見せる(実験のacc/loss一覧・アブレーション等)。図が無く表が主役のとき。列は3〜6・行は最大10目安、超えるなら分割。highlight で重要行を強調(深紅)。
-    deck: '{ "layout": "table", "header": "章名", "headline": "主張見出し", "columns": ["除去列", "残", "mean", "base比", "判定"], "rows": [["noEar9Var", "8", "83.27", "-4.63", "最重要"], ["noPup", "9", "85.10", "-2.80", "重要"]], "highlight": [0, 1], "widths": [3, 1, 1.4, 1.4, 1.6], "note": "補足1行(任意)" }'
+    when: 数値結果を行列の表で見せる(実験のacc/loss一覧・アブレーション等)。図が無く表が主役のとき。列は3〜6・行は最大10目安、超えるなら分割。highlight で重要行を強調(深紅)。行数が多く詰めたいときは compact:true(HTML で字・余白を縮小。pptx は行数で自動縮小)。
+    deck: '{ "layout": "table", "header": "章名", "headline": "主張見出し", "columns": ["除去列", "残", "mean", "base比", "判定"], "rows": [["noEar9Var", "8", "83.27", "-4.63", "最重要"], ["noPup", "9", "85.10", "-2.80", "重要"]], "highlight": [0, 1], "widths": [3, 1, 1.4, 1.4, 1.6], "compact": false, "note": "補足1行(任意)" }'
+
+  - id: panels
+    category: result
+    when: 複数の異種ブロック(表・画像・箇条書き)を小見出し付きで1枚に並べる。左右で「表と図」「表と要約」など性質の違う情報を対比・併置したいとき。columns は列(横分割)、各列は panel の配列(縦積み)。各 panel は title + table|image|bullets。widths で列幅比。
+    deck: '{ "layout": "panels", "header": "章名", "headline": "主張見出し", "widths": [1, 1], "columns": [ [ { "title": "定量", "table": { "columns": ["条件", "acc"], "rows": [["A", "0.83"], ["B", "0.85"]], "highlight": [1] } } ], [ { "title": "定性", "bullets": ["Bは誤検出が少ない", "推論も高速"] }, { "title": "代表例", "image": "figures/case.png" } ] ], "note": "補足1行(任意)" }'
+
+  - id: grid
+    category: result
+    when: 小さい画像を格子配置(データセット例・エッジ設計カタログ・条件別の出力サンプル等)。cols で列数、items は image + 任意 caption の配列。行数は自動。
+    deck: '{ "layout": "grid", "header": "章名", "headline": "主張見出し", "cols": 4, "items": [ { "image": "figures/a.png", "caption": "条件A" }, { "image": "figures/b.png", "caption": "条件B" } ], "note": "補足1行(任意)" }'
 
   - id: discussion
     category: lab
