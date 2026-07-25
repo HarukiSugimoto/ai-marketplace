@@ -1,0 +1,72 @@
+# build-kit のプロジェクト設定
+# 置き場所: <PJルート>/.build-kit/config.yaml
+# 作り方: /build-setup（検出 → 決まらないものだけ質問 → 実際に走らせて確認 → ここに記録）
+#
+# コミット対象。PJ の設定なのでチームや別マシンと共有する。
+# 検出できなかった項目は空のままにして、理由をコメントで残すこと（憶測で埋めない）。
+
+# ── 成果物の置き場所 ────────────────────────────────
+# design.md / plan.md / changes.md / report.html をここに置く。
+# 実際には <docs_dir>/<YYYY-MM-DD>-<slug>/ の下に並ぶ。
+# PJ に既存の設計書体系があるなら、それに合わせて変える。
+docs_dir: docs/dev
+
+# ── 検証コマンド ──────────────────────────────────
+# build-verify が「実際に走らせて出力を貼る」対象。
+# test は TDD の主証拠。typecheck / lint / build は前提条件（通って当たり前）。
+# 空文字なら実行しない。
+test_command: npm test
+typecheck_command: npx tsc --noEmit
+lint_command: ""
+build_command: ""
+
+# 単一テストだけ走らせるときのテンプレ。{path} と {name} を置換する。
+# build-run が RED を目視するときに使う。空なら test_command を丸ごと走らせる。
+#   jest   : npx jest {path} -t '{name}'
+#   vitest : npx vitest run {path} -t '{name}'
+#   pytest : pytest {path} -k '{name}'
+test_one_command: "npx jest {path} -t '{name}'"
+
+# セットアップ時点で既に赤かったものの件数。
+# 「今回の変更で壊した分」との判別基準になる。
+known_failures: 0
+
+# ── レビュー ────────────────────────────────────
+# build-verify は Spec 軸（受入条件）と Standards 軸（規約・品質）を並列で回す。
+# Standards 軸は既定で build-kit 汎用のレビュアーを使うが、
+# PJ に専用のレビュー手段があるならそちらのほうが正確。
+
+# PJ 固有のレビュー skill / スラッシュコマンド。
+# 例: "/check-spec"（設計書との整合性確認）, "/code-review"
+# 指定すると Standards 軸の代わりにこれを使う。
+review_skill: ""
+
+# PJ 固有のレビューをシェルで回す場合。例: "npm run review"
+# 指定すると build-verify が実行して、その出力を証拠に含める。
+review_command: ""
+
+# 規約の出典。Standards レビュアーに渡す。
+# ここに書かれた規約は、build-kit 内蔵の code smell ベースラインを上書きする。
+standards_files:
+  - CLAUDE.md
+
+# このPJで特に見てほしい観点（あれば）。Standards レビュアーに追加で渡す。
+# 例: ["UIコンポーネントにビジネスロジックを書いていないか", "hooks の命名が useGet[Resource] 形式か"]
+review_focus: []
+
+# ── スコープ ────────────────────────────────────
+# ここに列挙したパスは、計画に明記されていても改めて確認を取る。
+protected_paths:
+  - .env
+  - .env.*
+  - package-lock.json
+  - pnpm-lock.yaml
+
+# ── TDD の運用 ──────────────────────────────────
+# strict    : 全タスクで RED を先に書き、失敗を目視してから実装する（既定）
+# pragmatic : ロジック/データ層は strict、純粋な見た目の変更はテスト免除（理由の明記が必要）
+tdd_mode: strict
+
+# テストファイルの置き場所の慣習。build-plan が RED の配置先を決めるのに使う。
+# 既存テストから検出した実際の慣習を書く。
+test_layout: "__tests__/{name}.test.ts"

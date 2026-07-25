@@ -16,7 +16,7 @@
 1. **version は両マニフェストを同期して上げる。** `.claude-plugin/plugin.json` と `.codex-plugin/plugin.json` の `version` は必ず一致させる。片方だけ上げない。
 2. **新プラグインは両マーケットプレイスに登録。** `.claude-plugin/marketplace.json` と `.agents/plugins/marketplace.json` の両方に1エントリ追加する。**例外: loop-kit は Claude 専用**(session モードの Stop hook が Claude Code 限定のため Codex marketplace には載せない)。
 3. **機能に触れたら必ず version を上げる。** patch=バグ修正 / minor=機能追加(レイアウト追加等)/ major=破壊的変更。上げないと各マシンの `plugin update` で更新が反映されない。
-4. **生成物はコミットしない。** `.gitignore` で除外済み: `*.html` / `*.pptx` / `*-merged.css`(`.lab-theme-merged.css` 等)/ 各 plugin の `theme/_tokens.css` / `catalog/demo_deck.md` / `node_modules/` / `~$*` / `.DS_Store`。ビルド後に `git status` でソースだけが変更されていることを確認する。
+4. **生成物はコミットしない。** `.gitignore` で除外済み: `*.html`(**例外1つ: `plugins/build-kit/templates/report.html` はソースなので `!` で追跡している**) / `*.pptx` / `*-merged.css`(`.lab-theme-merged.css` 等)/ 各 plugin の `theme/_tokens.css` / `catalog/demo_deck.md` / `node_modules/` / `~$*` / `.DS_Store`。ビルド後に `git status` でソースだけが変更されていることを確認する。
 
 ## リリース手順(チェックリスト)
 
@@ -43,5 +43,6 @@ Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
 | paper-lab | 論文調査・原稿作成。蓄積→蒸留型 | README |
 | pm-kit | 議事録・意思決定ログ。蓄積→蒸留型 | README |
 | loop-kit | ループエンジニアリング。Stop hook / シェルループ / ファンアウト(**Claude 専用**) | README |
+| build-kit | TDD 前提の段階型開発。設計→計画→実装→検証→HTMLレポート。`/build-setup` `/build-design` `/build-run` の3コマンドで、間は自動連鎖 | `plugins/build-kit/CLAUDE.md` |
 
 スライド2つは同型エンジンだが**共有ライブラリ化せず各自に持つ**(プラグインはキャッシュに単体コピーされ自己完結が原則)。テーマ・レイアウト・話法は別物として育てる。

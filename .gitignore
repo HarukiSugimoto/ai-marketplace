@@ -1,4 +1,6 @@
 *.html
+# 例外: レポートの HTML テンプレートは生成物ではなくソース（build-kit）
+!plugins/build-kit/templates/report.html
 *.pptx
 ~$*
 .lab-theme-merged.css

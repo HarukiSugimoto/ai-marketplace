@@ -70,6 +70,14 @@ Codex 用 marketplace には `loop-kit` 以外を載せている。
 | [paper-lab](plugins/paper-lab/) | 論文調査・原稿作成。論文ノート蓄積 → 関連研究章・章ドラフト・査読者視点レビューへ蒸留 |
 | [pm-kit](plugins/pm-kit/) | 議事録・意思決定ログ。雑メモ→議事録+ToDo、ADR風の決定記録、未消化アイテムからアジェンダ起案 |
 | [loop-kit](plugins/loop-kit/) | ループエンジニアリング。適否診断→ループ設計(PROMPT.md+終了条件)→実行(Stop hook/シェルループ/ファンアウト)→振り返り |
+| [build-kit](plugins/build-kit/) | TDD 前提の段階型開発。設計→計画→実装→検証→HTMLレポートを4原則(スコープ宣言・証拠なき完了宣言の禁止・段階ゲート・気づきの報告義務)で型化 |
+
+build-kit だけ他と毛色が違い、**成果物ではなく進め方**を型にしたもの。
+コマンドは `/build-setup`(PJ に1回) / `/build-design` / `/build-run` の3本。
+段階の切り替えは自動連鎖し、止まるのは判断が要る4箇所だけ。
+検証は Spec 軸(受入条件)と Standards 軸(規約・品質)を並列サブエージェントに投げ、
+実装した本人が「動くと知っている」バイアスを外す。詳細は
+[plugins/build-kit/README.md](plugins/build-kit/README.md)。
 
 スライド2つは同型のエンジン(deck.json → HTML プレビュー + 編集可能pptx の二枚看板)を持つが、
 プラグインは自己完結が原則(キャッシュに単体コピーされる)なので共有ライブラリ化はせず、
@@ -110,3 +118,5 @@ work-slides は転職時に `/company-add` で会社パックを追加する(テ
 ## 関連リポジトリ
 
 - [agent-kit](../agent-kit/) — 他人の良い skill を借りてくる側(APM プロファイル)。この repo は自作を配る側で、役割が対。
+  build-kit はそこから「借りるのではなく**取り込む**」判断をした結果できたもの
+  (何をどこから取り込んだかは [plugins/build-kit/README.md](plugins/build-kit/README.md) の出典表)。

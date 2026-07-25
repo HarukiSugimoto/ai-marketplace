@@ -33,6 +33,11 @@
       "name": "loop-kit",
       "source": "./plugins/loop-kit",
       "description": "ループエンジニアリング支援システム。適否診断→ループ設計(PROMPT.md+終了条件)→実行(Stop hook/シェルループ/ファンアウト)→振り返り。"
+    },
+    {
+      "name": "build-kit",
+      "source": "./plugins/build-kit",
+      "description": "TDD 前提の段階型開発システム。設計→計画→実装→検証→HTMLレポートを、4原則(スコープ宣言・証拠なき完了宣言の禁止・段階ゲート・気づきの報告義務)で型化する。"
     }
   ]
 }

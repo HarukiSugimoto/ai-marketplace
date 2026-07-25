@@ -1,0 +1,55 @@
+{
+  "title": "保存前バリデーション",
+  "slug": "form-validation",
+  "date": "2026-07-26",
+  "verdict": "条件付き",
+  "summary": "フォーム保存時に必須項目を検査し、未入力ならエラーを表示するようにした。スピナー表示だけ画面確認が取れていない。",
+
+  "links": { "design": "design.md", "plan": "plan.md" },
+
+  "acceptance": [
+    { "n": 1, "criterion": "未入力で保存すると「必須です」が出る", "status": "pass",
+      "evidence": "useForm.test.ts › 未入力なら必須エラーを返す — passed" },
+    { "n": 2, "criterion": "空白のみの入力も未入力として扱う", "status": "pass",
+      "evidence": "useForm.test.ts › 空白のみは未入力扱い — passed" },
+    { "n": 3, "criterion": "検証中はスピナーが出る", "status": "warn",
+      "evidence": "テスト無し。画面確認をしていない" }
+  ],
+
+  "checks": [
+    { "name": "型チェック", "command": "npx tsc --noEmit", "exit": 0, "summary": "エラーなし", "output": "" },
+    { "name": "テスト", "command": "npm test", "exit": 0, "summary": "42 passed, 0 failed",
+      "output": "Test Suites: 8 passed, 8 total\nTests: 42 passed, 42 total" }
+  ],
+
+  "changes": [
+    { "path": "hooks/useForm.ts", "kind": "modified", "inScope": true,
+      "why": "保存前に必須項目を検査する validate() を追加" },
+    { "path": "__tests__/useForm.test.ts", "kind": "added", "inScope": true,
+      "why": "未入力・空白のみ・正常値の3ケースを固定" }
+  ],
+
+  "scope": {
+    "declared": ["hooks/useForm.ts", "__tests__/useForm.test.ts"],
+    "unexpected": []
+  },
+
+  "tasks": [
+    { "id": "T1", "name": "未入力を弾く", "done": true,
+      "red": "useForm.test.ts › 未入力なら必須エラーを返す",
+      "note": "RED で「validate は関数ではない」を確認してから実装" },
+    { "id": "T2", "name": "空白のみを未入力として扱う", "done": true,
+      "red": "useForm.test.ts › 空白のみは未入力扱い" }
+  ],
+
+  "notes": [
+    "useForm.ts の別の箇所に同じ必須チェックが重複している(今回は触っていない)"
+  ],
+
+  "leftovers": [
+    "スピナー表示の画面確認"
+  ],
+
+  "_diff_note": "git diff <BASE>...<HEAD> の生出力をそのまま文字列で入れる。行番号は report.mjs が @@ ハンクヘッダから復元する。",
+  "diff": "diff --git a/hooks/useForm.ts b/hooks/useForm.ts\nindex 3a1f2c4..9b7d105 100644\n--- a/hooks/useForm.ts\n+++ b/hooks/useForm.ts\n@@ -12,9 +12,20 @@ export const useForm = (initial: FormValue) => {\n   const [value, setValue] = useState(initial)\n   const [error, setError] = useState<string | null>(null)\n \n+  const validate = (v: FormValue): ValidationResult => {\n+    if (v.title.trim() === '') {\n+      return { ok: false, message: '必須です' }\n+    }\n+    return { ok: true }\n+  }\n+\n   const save = async () => {\n-    setError(null)\n-    await api.save(value)\n+    const result = validate(value)\n+    if (!result.ok) {\n+      setError(result.message)\n+      return\n+    }\n+    await api.save(value)\n   }\n \n   return { value, setValue, error, save }\ndiff --git a/__tests__/useForm.test.ts b/__tests__/useForm.test.ts\nnew file mode 100644\nindex 0000000..c4e8a1b\n--- /dev/null\n+++ b/__tests__/useForm.test.ts\n@@ -0,0 +1,14 @@\n+import { renderHook, act } from '@testing-library/react'\n+import { useForm } from '../hooks/useForm'\n+\n+test('未入力なら必須エラーを返す', async () => {\n+  const { result } = renderHook(() => useForm({ title: '' }))\n+  await act(() => result.current.save())\n+  expect(result.current.error).toBe('必須です')\n+})\n+\n+test('空白のみは未入力扱い', async () => {\n+  const { result } = renderHook(() => useForm({ title: '   ' }))\n+  await act(() => result.current.save())\n+  expect(result.current.error).toBe('必須です')\n+})\n"
+}

@@ -1,0 +1,35 @@
+{
+  "name": "build-kit",
+  "version": "0.1.0",
+  "description": "TDD 前提の段階型開発システム。設計→計画→実装→検証→レポートを4原則で型化し、最後に変更内容を HTML でプレビューする。",
+  "author": {
+    "name": "Haruki Sugimoto",
+    "email": "sugisugiharu@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "tdd",
+    "workflow",
+    "spec",
+    "review",
+    "report"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Build Kit",
+    "shortDescription": "設計→計画→実装→検証を段階で踏み、最後に HTML レポートを出す。",
+    "longDescription": "機能開発を4段階に分けて進めるプラグイン。設計と計画で受入条件をテストの形まで落とし、実装は RED→GREEN→REFACTOR で進め、検証では実際にコマンドを走らせた出力を証拠として要求する。全段階に共通する4原則(触る範囲を先に宣言する / 証拠なしに完了と言わない / 段階の境界で止まる / 気づきは必ず報告し実行はしない)で、頼んでいない変更と未検証の完了報告を防ぐ。最後に計画・変更箇所・受入条件・検証結果を1枚の HTML にまとめてブラウザで確認できる。",
+    "developerName": "Haruki Sugimoto",
+    "category": "Productivity",
+    "capabilities": [
+      "Plan",
+      "Generate",
+      "Review"
+    ],
+    "defaultPrompt": [
+      "build-kit でこの機能の設計から始めて。",
+      "設計メモから実装計画を作って。",
+      "実装が終わったので検証してレポートを出して。"
+    ]
+  }
+}
