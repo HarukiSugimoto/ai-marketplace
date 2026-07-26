@@ -1,6 +1,7 @@
 # Spec 軸レビュアーのプロンプト雛形
 
-build-verify で Standards 軸と**並列に**投げる `general-purpose` サブエージェント。
+build-verify で Standards 軸と**並列に**投げる汎用サブエージェント
+(Claude Code なら `general-purpose`、Codex なら `default`)。
 
 **なぜサブエージェントにするか**: 実装した本人は「動くと知っている」ので、
 証拠が無い項目を無意識に ✅ に丸める。会話履歴を持たない目に判定させると、

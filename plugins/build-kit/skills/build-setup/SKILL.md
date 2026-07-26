@@ -75,6 +75,9 @@ build-kit の都合で新しい体系を持ち込まない。
 | `.claude/commands/*.md` | PJ 固有のスラッシュコマンド(`/review` `/check` 等) |
 | `.claude/skills/*/SKILL.md` | PJ 固有の skill(`check-spec` のような整合性確認) |
 | `.claude/settings.json` の `hooks` | commit/push 時に自動で走るチェック |
+| `.agents/skills/*/SKILL.md` | ハーネス中立の skill(Codex もここを読む) |
+| `AGENTS.md` | Codex 側の規約・レビュー方針。`standards_files` の候補でもある |
+| `.codex/` の `agents/*.toml` / `hooks.json` | Codex のサブエージェント定義・自動チェック |
 | `package.json` の `scripts` | `review` / `check` / `audit` 系 |
 | `.github/workflows/*.yml` | CI が何を回しているか |
 | `.husky/` / `lefthook.yml` | pre-commit で走るもの |
@@ -92,8 +95,8 @@ CI が回しているものは `lint_command` などに取り込む
 1. **検出できなかったもの** — 例: テストコマンドが見つからない
 2. **決定が要るもの** — 候補が複数ある、またはユーザーの方針次第
 
-frontier としてまとめて1ラウンドで聞く(AskUserQuestion、最大4問)。
-各質問に**推奨する答えを添える。**
+frontier としてまとめて1ラウンドで聞く(AskUserQuestion が使えるなら最大4問。
+無いハーネスでは番号を振って1メッセージにまとめる)。各質問に**推奨する答えを添える。**
 
 決定が要る典型:
 

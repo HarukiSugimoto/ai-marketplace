@@ -31,7 +31,7 @@ issue tracker 連携と `docs/superpowers/` 固定パスは持たない。
 ```
 /build-setup                         ← 1回だけ
    ├ package.json / テスト設定 / 既存テストの置き場所 / 規約ファイルを読む
-   ├ .claude/commands/ と .claude/skills/ から PJ 固有のレビュー手段を探す
+   ├ 既存のレビュー手段を探す(.claude/ / .agents/ / AGENTS.md / CI / husky)
    ├ 決まらないものだけ聞く（frontier で1ラウンド）
    ├ 記録するコマンドを実際に走らせて確認
    └ .build-kit/config.yaml
@@ -66,6 +66,32 @@ issue tracker 連携と `docs/superpowers/` 固定パスは持たない。
 
 `/build-run` から自動で連鎖するので普段は不要。単独で回したいとき
 （「レポートだけ出し直して」「検証だけもう一回」）は自然言語で呼べば skill が発火する。
+
+### Codex ではコマンドが無い（skill 名で呼ぶ）
+
+**Codex のプラグインが束ねられるのは skills / MCP servers / hooks の3つで、
+コマンドは含まれない。** カスタムプロンプト（= スラッシュコマンド）は deprecated かつ
+`~/.codex/prompts/` のユーザー階層のみで、プラグインからは配布できない。
+OpenAI 自身が「skills を使え、skills は明示的にも暗黙的にも呼べる」と案内している。
+
+なので Codex では **skill を名前で呼ぶ**:
+
+| Claude Code | Codex |
+|---|---|
+| `/build-setup` | 「build-setup で設定して」 |
+| `/build-design 〜を作りたい` | 「build-design で〜の設計を始めて」 |
+| `/build-run` | 「build-run で実装して」 |
+
+各 skill の `description` に日本語のトリガー句を入れてあるので、
+「セットアップして」「設計を固めたい」「実装して」でも暗黙に発火する。
+
+**それ以外は両方で同じように動く:**
+
+- `${CLAUDE_PLUGIN_ROOT}` は Codex でも**後方互換で提供されている**
+  （`PLUGIN_ROOT` / `PLUGIN_DATA` と併存）。雛形もスクリプトも同じパスで解決できる
+- サブエージェントは名前だけ違う（Claude Code = `general-purpose` / Codex = `default`）。
+  build-verify に対応表を書いてある
+- 質問は AskUserQuestion が無ければ番号を振って1メッセージにまとめる
 
 ## skill
 
@@ -127,8 +153,9 @@ issue tracker 連携と `docs/superpowers/` 固定パスは持たない。
 `review_skill` / `review_command` が設定されていれば、Standards 軸は**そちらを使う**。
 build-kit の汎用レビュアーは、PJ に何も無いときのフォールバック。
 
-`/build-setup` は `.claude/commands/` `.claude/skills/` `.github/workflows/` `.husky/`
-`package.json` の scripts を探して、**既にあるレビュー手段を見つけてくる。**
+`/build-setup` は `.claude/commands/` `.claude/skills/` `.agents/skills/` `AGENTS.md`
+`.codex/agents/` `.github/workflows/` `.husky/` `package.json` の scripts を探して、
+**既にあるレビュー手段を見つけてくる**(Claude / Codex どちらの流儀でも拾う)。
 
 **コーディング規約は持たない。** 命名やディレクトリ構造は PJ の CLAUDE.md に任せる。
 build-kit が扱うのは「段階の進め方」だけ。

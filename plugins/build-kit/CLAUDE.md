@@ -75,7 +75,28 @@ done
 生成時に剥がされるので、生成物には載らない — ただし**コメント内に
 二重波かっこの実例を書かない**こと(置換対象として拾われる。一度やった)。
 
-### 5. 出典表を腐らせない
+### 5. Claude / Codex 両対応の前提を壊さない
+
+Codex marketplace にも載せている（loop-kit のような Claude 専用ではない）。
+
+- **`${CLAUDE_PLUGIN_ROOT}` はそのまま使ってよい。** Codex が後方互換で提供している
+  （`PLUGIN_ROOT` に書き換える必要は無い。むしろ Claude 側が壊れる）
+- **`commands/` は Claude 限定。** Codex のプラグインは skills / MCP / hooks しか束ねられず、
+  カスタムプロンプトは deprecated かつプラグイン配布不可。
+  **コマンドでしか起動できない機能を作らない** — skill 側だけで完結させ、
+  description に日本語トリガーを入れておく
+- **ハーネス固有の名前を裸で書かない。** サブエージェントは
+  Claude Code = `general-purpose` / Codex = `default`。対応表で書く
+- **`AskUserQuestion` を前提にしない。** 無い環境では「番号を振って1メッセージ」に落とす
+
+確認:
+
+```
+grep -rn "general-purpose\|AskUserQuestion" plugins/build-kit/skills plugins/build-kit/templates
+# → 対応表・代替手段とセットで出てくるのが正。裸で出たら NG
+```
+
+### 6. 出典表を腐らせない
 
 README の「出典 — skill ごとに何を借りたか」は、**どの外部 skill の何を取り込んだかの記録**。
 skill の中身を書き換えたら表も直す。★(build-kit 固有)と外部由来の区別を保つ。

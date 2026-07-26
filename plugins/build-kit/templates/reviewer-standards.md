@@ -1,6 +1,7 @@
 # Standards 軸レビュアーのプロンプト雛形
 
-build-verify の Step 3.5 で `general-purpose` サブエージェントに渡す。
+build-verify の Step 3 で汎用サブエージェントに渡す
+(Claude Code なら `general-purpose`、Codex なら `default`)。
 **セッションの会話履歴は渡さない。** 差分と規約と下のベースラインだけを渡し、
 「作った側の言い分」に影響されない目で見せるのが狙い。
 
