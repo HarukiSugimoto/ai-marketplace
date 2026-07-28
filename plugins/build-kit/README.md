@@ -47,11 +47,11 @@ obra/superpowers の「ゲートと証拠要求」、mattpocock/skills の grill
    ├ 決定木を frontier 単位で詰める（ユーザーと往復）
    ├ design.md
    ├ ■1 設計の承認
-   ├ plan.md            ← 承認が出たら自動で続く
+   ├ plan.md + tasks/01..NN.md   ← 承認が出たら自動で続く
    └ ■2 計画の承認 → 止まる
 
 /build-run
-   ├ 未完タスクを先頭から全部（RED→目視→GREEN→REFACTOR）
+   ├ 着手可能なタスクから全部（RED→目視→GREEN→REFACTOR）
    │    └ ■3 スコープ逸脱なら止まる
    ├ 検証（Spec 軸 / Standards 軸を並列サブエージェントで）  ← 自動
    │    └ ■4 ⚠️ か ❌ が出たら止まる
@@ -67,7 +67,27 @@ obra/superpowers の「ゲートと証拠要求」、mattpocock/skills の grill
 途中で止めると検証が成立せず「未確認」だらけの判定表になる。
 一部だけ直したいなら、それは別の計画(=別の `/build-design`)にすべき対象。
 
-セッションをまたいで再開したときは、チェックボックスを見て続きから入る。
+セッションをまたいで再開したときは、各タスクの `Blocked by` とチェックボックスから
+**着手可能なものを計算し直して**続きに入る。
+
+### タスクは依存順に取る(番号順ではない)
+
+タスクは `tasks/<NN>-<slug>.md` に1ファイルずつあり、各ファイルが
+**`Blocked by`(先に終わっている必要があるタスク)** を宣言する。
+build-run は「上から順」ではなく **ブロッカーが全部済んだタスク**から取る。
+
+**これは並列実行ではない。** 実装は今までどおり1タスクずつ、順番に進む。
+得られるのは速さではなく、次の3つ:
+
+| | |
+|---|---|
+| **迂回できる** | 01 で詰まっても、依存していない 03 に進める |
+| **再開が楽** | セッションが切れても、次回は `Blocked by` と進捗から着手可能なものを再計算するだけ |
+| **依存が明示される** | 「なんとなく順番」が「宣言された依存」になる。ゲート2で目視できる |
+
+代わりに、**依存の書き漏らしがそのまま事故になります**(番号順に並んでいるだけでは
+守られない)。対策は2つ入れてあります — ゲート2で依存だけを独立して確認すること、
+build-run が着手前に「使うもの」の実在を確認して、無ければ止まること。
 
 ### `build-verify` / `build-report` にコマンドは無い
 
@@ -108,7 +128,7 @@ OpenAI 自身が「skills を使え、skills は明示的にも暗黙的にも�
 |---|---|---|---|
 | `build-setup` | 準備 | 検証コマンド・置き場所・PJ固有のレビュー手段を検出し、**実際に走らせて確認**してから記録 | `.build-kit/config.yaml` |
 | `build-design` | 設計 | 決定木の frontier をラウンドで詰め、案を2〜3比較し、受入条件の素案を作る。**承認後そのまま build-plan へ** | `design.md` |
-| `build-plan` | 計画 | 受入条件を**テストの形**に落とし、触るファイルを宣言し、RED→GREEN のタスクに割る | `plan.md` |
+| `build-plan` | 計画 | 受入条件を**テストの形**に落とし、触るファイルを宣言し、全レイヤーを貫く縦割りのタスクに割って1タスク1ファイルで書き出す | `plan.md` + `tasks/` |
 | `build-run` | 実装 | RED → 失敗を目視 → GREEN → REFACTOR を1タスクずつ。宣言外に触るとき停止。**完了後そのまま build-verify へ** | コード + `changes.md` |
 | `build-verify` | 検証 | コマンドを実際に走らせ、**2軸を並列サブエージェント**で判定 | 判定表 |
 | `build-report` | 報告 | 全部を1枚の HTML にまとめてブラウザで開く | `report.html` |
@@ -171,14 +191,22 @@ build-kit が扱うのは「段階の進め方」だけ。
 
 ```
 <docs_dir>/<YYYY-MM-DD>-<slug>/
-├── design.md      # 何を解くか、案の比較、受入条件の素案
-├── plan.md        # 全体制約、スコープ宣言、受入条件→テスト対応、RED/GREEN タスク
-├── changes.md     # 変更したファイルと「なぜ変えたか」
-├── report.json    # レポートの入力
-└── report.html    # 生成物。コミットしない
+├── design.md          # 何を解くか、案の比較、受入条件の素案
+├── plan.md            # 全体制約、スコープ宣言、受入条件→テスト対応、依存の見取り図
+├── tasks/
+│   ├── 01-<slug>.md   # Blocked by / RED / 失敗の期待 / GREEN / インターフェース / 進捗
+│   ├── 02-<slug>.md
+│   └── 03-<slug>.md
+├── changes.md         # 変更したファイルと「なぜ変えたか」
+├── report.json        # レポートの入力
+└── report.html        # 生成物。コミットしない
 ```
 
-`design.md` / `plan.md` / `changes.md` はコミット対象。`report.html` は生成物。
+`design.md` / `plan.md` / `tasks/` / `changes.md` はコミット対象。`report.html` は生成物。
+
+**依存と進捗の正は `tasks/*.md` 側。** `plan.md` の依存の表は計画時点の見取り図で、
+ズレたらタスクファイルが勝つ。タスクファイル1枚を単独で渡しても実装できる状態に保つ、
+というのが分割の目的なので、そのファイルが依存について嘘をつくと意味がなくなる。
 
 ## HTML レポート
 
@@ -265,6 +293,17 @@ CSS・骨組み・タブの JS は **`templates/report.html`** にある。`repo
 | **「失敗の期待」を事前に書く** | 同上の状態機械 `verify_red -> red [label="wrong failure"]` |
 | ★ **受入条件 → テスト対応表** | —(`verification-before-completion` の `Claim / Not Sufficient` 表を事前固定に反転) |
 | ★ **スコープ宣言** / `tdd_mode` の免除基準 | — |
+| **縦割り(tracer bullet)** — 細くてよいが全レイヤーを貫く1本の経路。水平タスクを作らない | mattpocock `to-tickets` |
+| **prefactoring を先頭に**(「変更しやすくしてから、変更する」) | 同上 Step 2 |
+| **広域変更は縦割りの例外 → expand → migrate → contract** / バッチは影響範囲で切る / 緑にできないときは統合タスクで約束する | 同上 _Wide refactors are the exception_ |
+| **1タスク1ファイル + `Blocked by` をテキストで宣言** | 同上のローカル tracker モード(`.scratch/<feature>/issues/<NN>-<slug>.md`) |
+| **frontier**(ブロッカーが全部済んだものから取る) | mattpocock `to-tickets` / `batch-grill-me`。build-kit では既に**質問**の frontier を使っており、その**タスク版** |
+| ★ **依存の正はタスクファイル側**(plan.md の表は見取り図。ズレたらタスクが勝つ) | — |
+| ★ **`使うもの` と `Blocked by` は一致する**という不変条件 / ゲート2で依存を独立項目として確認する | — |
+
+**採らなかったもの:** blocking edge の native リンク化と issue tracker への publish
+(build-kit は issue tracker 連携を意図的に持たない)、`Quiz the user` の反復
+(ゲート2が同じ役目を果たす)。
 
 ### build-run
 
@@ -331,7 +370,7 @@ CSS・骨組み・タブの JS は **`templates/report.html`** にある。`repo
 | エラーは淡々と(場所・原因・次) | 8 |
 | 前置き・まとめ・締めの挨拶を書かない | 10 |
 | **「破ってよい条件」を skill 自身に持たせる**という構造 / 送信前チェック | 出典の同名セクション |
-| ★ 現在地を「段階 + T2 of T5」の2軸で書く / ゲート・証拠・気づき・判定表を7条の適用外と明記 | — |
+| ★ 現在地を「段階 + `02 of 05`」の2軸で書く / ゲート・証拠・気づき・判定表を7条の適用外と明記 | — |
 
 **採らなかった3つ**(理由は `templates/output-style.md` 末尾に記録):
 
@@ -355,6 +394,7 @@ CSS・骨組み・タブの JS は **`templates/report.html`** にある。`repo
 | mattpocock `grilling` | build-design / build-setup の「事実と決定の分離」 |
 | mattpocock `batch-grill-me` | build-design / build-setup の frontier ラウンド |
 | mattpocock `karpathy-guidelines` | build-run の簡潔さ・孤児・辿れるかテスト |
+| mattpocock `to-tickets` | build-plan Step 3 の縦割り・prefactoring・expand–contract + 1タスク1ファイル + frontier |
 | mattpocock `implement` | build-run/verify のテスト実行の分担(確認に使っただけ) |
 | wanshuiyin `kill-argument` | build-verify の「会話履歴を渡さない」 |
 | 自作 `loop-kit / loop-design` | config 解決の構造 + 「CLAUDE.md を複製しない」思想 |
@@ -362,19 +402,31 @@ CSS・骨組み・タブの JS は **`templates/report.html`** にある。`repo
 
 ### 調査の範囲
 
-agent-kit が展開している **81 skill のうち、本文を読んだのは 16 本。そこから 13 本を採用した。**
-残る 65 本は description しか見ていない。**`i-have-adhd` だけは agent-kit の外**(単独の
+agent-kit が展開している **81 skill のうち、本文を読んだのは 26 本。そこから 14 本を採用した。**
+残る 55 本は description しか見ていない。**`i-have-adhd` だけは agent-kit の外**(単独の
 marketplace)から取っている。
 
-読んだもの: `brainstorming` / `test-driven-development` / `verification-before-completion` /
-`requesting-code-review`(+`code-reviewer.md`) / `writing-plans` / `systematic-debugging` /
-`grilling` / `grill-me` / `grill-with-docs` / `batch-grill-me` / `karpathy-guidelines` /
-`code-review` / `implement` / `kill-argument` / 自作 `loop-design` / 記録アプリの `check-spec`
+第1回(v0.1.0)に読んだもの: `brainstorming` / `test-driven-development` /
+`verification-before-completion` / `requesting-code-review`(+`code-reviewer.md`) /
+`writing-plans` / `systematic-debugging` / `grilling` / `grill-me` / `grill-with-docs` /
+`batch-grill-me` / `karpathy-guidelines` / `code-review` / `implement` / `kill-argument` /
+自作 `loop-design` / 記録アプリの `check-spec`
+
+第2回(v0.3.0)に読んだもの: `to-spec` / **`to-tickets`(採用)** / `tdd`(mattpocock 版) /
+`codebase-design`(+`DEEPENING.md` / `DESIGN-IT-TWICE.md`) / `domain-modeling` /
+`setup-agent-environment` / `triage` / `prototype` / `research` / `wayfinder` /
+`improve-codebase-architecture` / `ask-matt`
 
 **description ベースの判断は当てにならない。** grill 系4本は読んだら判定が逆転した
 (`grill-me` は中身の無いエイリアスで、本体は `grilling` だった。
 `batch-grill-me` は重複ではなく別モデルだった)。
 **採否を見直すときは、description ではなく本文を読むこと。**
+
+**第2回で分かったこと。** `to-spec` / `implement` に相当するものは build-kit が既に
+持っていた(`design.md` と build-run)。**足りなかったのは `to-tickets` だけ** — 分解の
+「形」の規定(縦割り)と、縦割りにできない広域変更の逃げ道(expand–contract)。
+`codebase-design` の deep module 語彙、`prototype`、`wayfinder`(1セッションに収まらない
+規模を決定チケットの地図として扱う)は読んだうえで**今回は見送り**、候補として残す。
 
 ## 意図的に持たないもの
 
@@ -384,5 +436,5 @@ marketplace)から取っている。
 | issue tracker 連携 | GitHub issue を運用していないので機能しない |
 | 「テストを書かなくてよい」経路 | TDD が前提。免除は `pragmatic` + 理由明記のときだけ |
 | 自動コミット / 自動 push | 判断がユーザーのものなので原則3に反する |
-| `/build-run T3` のような部分実行 | 受入条件が計画全体に対して定義されているので、途中で止めると検証が成立しない |
+| `/build-run 03` のような部分実行 | 受入条件が計画全体に対して定義されているので、途中で止めると検証が成立しない |
 | `build-verify` / `build-report` のコマンド | 自動連鎖するので不要。コマンドの打ち直しは儀式でしかない |

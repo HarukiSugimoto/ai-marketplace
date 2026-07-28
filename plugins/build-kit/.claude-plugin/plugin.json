@@ -1,6 +1,6 @@
 {
   "name": "build-kit",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "TDD 前提の段階型開発システム。設計→計画→実装→検証→レポートを5原則(スコープ宣言・証拠なき完了宣言の禁止・段階ゲート・気づきの報告義務・出力の型)で型化し、最後に変更内容を HTML でプレビューする。",
   "author": {
     "name": "Haruki Sugimoto",

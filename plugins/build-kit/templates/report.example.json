@@ -35,10 +35,10 @@
   },
 
   "tasks": [
-    { "id": "T1", "name": "未入力を弾く", "done": true,
+    { "id": "01", "name": "未入力を弾く", "done": true,
       "red": "useForm.test.ts › 未入力なら必須エラーを返す",
       "note": "RED で「validate は関数ではない」を確認してから実装" },
-    { "id": "T2", "name": "空白のみを未入力として扱う", "done": true,
+    { "id": "02", "name": "空白のみを未入力として扱う", "done": true,
       "red": "useForm.test.ts › 空白のみは未入力扱い" }
   ],
 
