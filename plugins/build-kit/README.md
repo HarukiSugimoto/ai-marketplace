@@ -3,10 +3,10 @@
 TDD 前提の**段階型開発システム**。設計 → 計画 → 実装 → 検証 → レポートを型化する。
 
 obra/superpowers の「ゲートと証拠要求」、mattpocock/skills の grill 系の
-「決定木 × frontier × 事実と決定の分離」をいいところ取りし、
-issue tracker 連携と `docs/superpowers/` 固定パスは持たない。
+「決定木 × frontier × 事実と決定の分離」、ayghri/i-have-adhd の「出力の形」を
+いいところ取りし、issue tracker 連携と `docs/superpowers/` 固定パスは持たない。
 
-## 4原則
+## 5原則
 
 全 skill に共通する背骨。これが build-kit の正体。
 
@@ -16,9 +16,16 @@ issue tracker 連携と `docs/superpowers/` 固定パスは持たない。
 | 2 | **証拠なき完了宣言の禁止** — 「通るはず」は証拠ではない | 未検証の「できました」 |
 | 3 | **段階ゲート** — **判断がユーザーのものである境界**では必ず止まる。「作業を続けていいですか」だけのためには止まらない | 確認せずに突き進む |
 | 4 | **気づきの報告義務** — 気づいたら必ず言う。ただし**実行はしない**。無ければ「無し」と書く | 言われたことしかやらない |
+| 5 | **出力の型** — 1行目は結論か次の行動。**段階の現在地を毎回書く**。前置きと締めの挨拶を書かない | 判断に要る情報が埋もれる |
 
 3 と 4 は一見矛盾するが、そうではない。**観察は義務、実行は許可制**という分離になっている。
 黙って実行するのも、黙って見送るのも違反。
+
+1〜4 が**振る舞い**の規定なのに対し、5 だけは**テキストの形**の規定。
+分けずに並べているのは、build-kit が6段階を**自動で連鎖させる**から。
+ユーザーはコマンドを打ち直さないので、今どの段階のどのタスクにいるかは
+こちらが毎回書かないと分からない。7か条の全文は
+[`templates/output-style.md`](templates/output-style.md)(各 skill には1行だけ置いて参照する)。
 
 ## 使い方 — コマンドは3つ
 
@@ -217,7 +224,9 @@ CSS・骨組み・タブの JS は **`templates/report.html`** にある。`repo
 
 ## 出典 — skill ごとに何を借りたか
 
-★は agent-kit に出典が無い build-kit 固有の部分。
+★は**外部に出典が無い** build-kit 固有の部分。
+出典のほとんどは agent-kit の 81 skill から。例外は原則5(出力の型)だけで、
+こちらは [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd) から取っている。
 
 ### build-setup
 
@@ -307,12 +316,37 @@ CSS・骨組み・タブの JS は **`templates/report.html`** にある。`repo
 | `reviewer-spec.md` | missing/partial・scope creep・実装が間違っている の3観点 | mattpocock `code-review` の Spec 軸ブリーフ |
 | | ★ テストが**実在し実際に結果に含まれる**か確認 / 中身を読む(アサーション無しは達成ではない) / 「実装を読む限り満たしていそう」は ⚠️ | — |
 
+### 出力の型(原則5 / `templates/output-style.md`)
+
+**唯一 agent-kit の外から取ったもの。** 出典は [ayghri/i-have-adhd](https://github.com/ayghri/i-have-adhd)(MIT)。
+元は「ADHD の読者が行動に移せる出力の形」を10ルールで規定した skill。
+
+| 取り込んだもの | 出典のルール番号 |
+|---|---|
+| 1行目は結論か次の行動。前置きの宣言で始めない | 1 |
+| 手順は番号付き、1項目1動作 | 2 |
+| **現在地を毎回書く**(読者は前のメッセージの位置を覚えていない前提) | 5 |
+| 止まるときは次の1手を1つだけ | 3 |
+| 完了は「何ができるようになったか」+ 証拠で見せる | 7 |
+| エラーは淡々と(場所・原因・次) | 8 |
+| 前置き・まとめ・締めの挨拶を書かない | 10 |
+| **「破ってよい条件」を skill 自身に持たせる**という構造 / 送信前チェック | 出典の同名セクション |
+| ★ 現在地を「段階 + T2 of T5」の2軸で書く / ゲート・証拠・気づき・判定表を7条の適用外と明記 | — |
+
+**採らなかった3つ**(理由は `templates/output-style.md` 末尾に記録):
+
+| 採らないルール | 理由 |
+|---|---|
+| 4. 脱線を抑える | **原則4(気づきの報告義務)と衝突する** |
+| 6. 具体的な時間見積もり | 実行者がエージェントなので「15分」が意味を持たない。タスク数・テスト本数で代替 |
+| 9. リストは5項目まで | 受入条件表・指摘一覧・`changes.md` を5件で切ると情報が落ちる |
+
 ### 逆引き
 
-| agent-kit の skill | 効いた場所 |
+| 借りた skill | 効いた場所 |
 |---|---|
-| obra `verification-before-completion` | build-verify のほぼ全部 + 4原則の文体 + build-setup の「走らせてから記録」 |
-| obra `test-driven-development` | build-run の状態機械 + build-plan の RED/GREEN + 4原則の文体 |
+| obra `verification-before-completion` | build-verify のほぼ全部 + 原則1〜4の文体 + build-setup の「走らせてから記録」 |
+| obra `test-driven-development` | build-run の状態機械 + build-plan の RED/GREEN + 原則1〜4の文体 |
 | obra `brainstorming` | build-design のゲート・案の比較・セクション承認・保存形式 |
 | obra `writing-plans` | build-plan のタスク粒度・インターフェース欄・全体制約 |
 | obra `systematic-debugging` | build-run Step 4.5 |
@@ -324,11 +358,13 @@ CSS・骨組み・タブの JS は **`templates/report.html`** にある。`repo
 | mattpocock `implement` | build-run/verify のテスト実行の分担(確認に使っただけ) |
 | wanshuiyin `kill-argument` | build-verify の「会話履歴を渡さない」 |
 | 自作 `loop-kit / loop-design` | config 解決の構造 + 「CLAUDE.md を複製しない」思想 |
+| ayghri `i-have-adhd` | 原則5(出力の型)の全部 |
 
 ### 調査の範囲
 
 agent-kit が展開している **81 skill のうち、本文を読んだのは 16 本。そこから 13 本を採用した。**
-残る 65 本は description しか見ていない。
+残る 65 本は description しか見ていない。**`i-have-adhd` だけは agent-kit の外**(単独の
+marketplace)から取っている。
 
 読んだもの: `brainstorming` / `test-driven-development` / `verification-before-completion` /
 `requesting-code-review`(+`code-reviewer.md`) / `writing-plans` / `systematic-debugging` /

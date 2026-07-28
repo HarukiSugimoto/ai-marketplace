@@ -6,7 +6,7 @@
 ## この plugin の正体
 
 **成果物ではなく進め方**を型にしたもの(他の plugin はスライドや議事録という成果物を作る)。
-中身は4原則 + 6段階 + レビュアー雛形2本 + HTML レポート生成器。
+中身は5原則 + 6段階 + レビュアー雛形2本 + 出力の型 + HTML レポート生成器。
 
 ## 触るときの不変条件
 
@@ -26,17 +26,29 @@
     | grep -v "build-setup\|build-design\|build-run"
   ```
 
-### 2. 4原則は6本の SKILL.md に同一文面で重複している
+### 2. 5原則は6本の SKILL.md に同一文面で重複している
 
 意図的な重複(skill が単独で発火しても原則が効くように)。**文言を変えるときは6本すべて直す:**
 
 ```
-grep -l "4原則(build-kit 共通)" plugins/build-kit/skills/*/SKILL.md   # 6 出るのが正
+grep -l "5原則(build-kit 共通)" plugins/build-kit/skills/*/SKILL.md   # 6 出るのが正
 ```
 
 原則3の文言は特に注意。「段階の境界で必ず止まる」ではなく
 **「判断がユーザーのものである境界では止まる。作業を続ける許可のためには止まらない」**。
 前者に戻すと自動連鎖と矛盾する。
+
+**原則5(出力の型)だけは実体を6本に持たせない。** 6本にあるのは要約1行 +
+`templates/output-style.md` への参照だけ。7か条の本文をここに展開すると、
+同期対象が6本×2ブロックになって必ず腐る(原則1〜4で既に一度踏んでいる)。
+
+- **7か条を増減するなら `templates/output-style.md` だけを直す。** 6本は触らない
+- 6本の要約1行を変えるときだけ、6本すべてを直す
+- 確認: `grep -c "output-style.md" plugins/build-kit/skills/*/SKILL.md` が全部 1
+
+原則5には**採らなかった3ルール**(脱線抑制 / 時間見積もり / リスト5項目上限)を
+理由つきで記録してある。**「抜けている」と思って足さないこと** — 脱線抑制は原則4と、
+リスト上限は受入条件表・指摘一覧と衝突する。
 
 ### 3. PJ 固有のものは config.yaml に集約する
 
@@ -124,6 +136,13 @@ git check-ignore plugins/build-kit/templates/report.html
 
 # 5. テンプレに未定義のプレースホルダが無いか（1 で落ちるのが正常系の検出）
 node plugins/build-kit/scripts/report.mjs plugins/build-kit/templates/report.example.json -o /tmp/r.html
+
+# 6. 5原則が6本に揃っているか（どちらも 6 が正）
+grep -lc "5原則(build-kit 共通)" plugins/build-kit/skills/*/SKILL.md | wc -l
+grep -lc "output-style.md" plugins/build-kit/skills/*/SKILL.md | wc -l
+
+# 7. 原則5の実体が6本に流出していないか（何も出ないのが正）
+grep -rln "破ってよい条件\|送信前チェック" plugins/build-kit/skills/
 ```
 
 レポート生成器はエッジケース(未達・宣言外の変更・テスト失敗・空配列・diff あり)でも
