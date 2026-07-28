@@ -22,13 +22,14 @@
       "output": "Test Suites: 8 passed, 8 total\nTests: 42 passed, 42 total" }
   ],
 
+  "_changes_note": "task は changes.md のタスク見出しの番号。複数タスクで触ったファイルは \"01, 02\" のように並べる。",
   "changes": [
-    { "path": "hooks/useForm.ts", "kind": "modified", "inScope": true,
+    { "path": "hooks/useForm.ts", "kind": "modified", "inScope": true, "task": "01, 02",
       "why": "保存前に必須項目を検査する validate() を追加" },
-    { "path": "__tests__/useForm.test.ts", "kind": "added", "inScope": true,
+    { "path": "__tests__/useForm.test.ts", "kind": "added", "inScope": true, "task": "01, 02",
       "why": "未入力・空白のみ・正常値の3ケースを固定" },
     { "path": "__tests__/__snapshots__/useForm.snap", "kind": "modified",
-      "inScope": false, "autoScope": true,
+      "inScope": false, "autoScope": true, "task": "02",
       "why": "(auto_scope) バリデーション追加に伴うスナップショット更新" }
   ],
 

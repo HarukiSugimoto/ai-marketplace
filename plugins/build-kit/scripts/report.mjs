@@ -138,14 +138,17 @@ const planTab = [
 ].join("") || `<p class="empty">計画の情報がありません。</p>`;
 
 // ── タブ2: 変更 ────────────────────────────────────────
+// task 列は changes.md のタスク見出しの番号。「受入条件 → 担当タスク → ファイル」の
+// 鎖の最後の一節にあたるので、記録が無いときは空欄にせず「—」を出して欠落だと分かるようにする。
 const changesTable = changes.length ? `
 <div class="scroll"><table>
-  <thead><tr><th>ファイル</th><th style="width:5rem">種別</th><th>なぜ変えたか</th></tr></thead>
+  <thead><tr><th>ファイル</th><th style="width:5rem">種別</th><th style="width:5rem">タスク</th><th>なぜ変えたか</th></tr></thead>
   <tbody>${changes.map((c) => `<tr${c.inScope === false && !c.autoScope ? ' class="flag"' : ""}>
     <td class="mono small">${esc(c.path)}${
       c.autoScope ? ' <span class="pill neutral">自動許可</span>'
       : c.inScope === false ? ' <span class="pill bad">宣言外</span>' : ""}</td>
     <td class="small">${esc(KIND[c.kind] ?? c.kind ?? "")}</td>
+    <td class="mono small">${esc(c.task) || '<span class="empty">—</span>'}</td>
     <td>${esc(c.why) || '<span class="empty">理由の記録なし</span>'}</td>
   </tr>`).join("")}</tbody>
 </table></div>` : "";

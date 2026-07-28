@@ -30,7 +30,7 @@ build-kit の最終段階。ここまでの成果を**ブラウザで見返せ�
 | 題名 / slug / 日付 | `<docs_dir>/<日付>-<slug>/` のディレクトリ名と design.md |
 | 受入条件と証拠 | build-verify の判定表 |
 | 検証コマンドの出力 | build-verify で実際に走らせた結果(exit code 込み) |
-| 変更ファイルと理由 | `changes.md`(build-run が書いたもの)。無ければ `git diff --name-status` + 各ファイルの理由を補う |
+| 変更ファイルと理由 | `changes.md`(build-run が書いたもの)。**タスク見出しの番号も一緒に拾う**。無ければ `git diff --name-status` + 各ファイルの理由を補う |
 | スコープ照合 | plan.md のスコープ宣言 vs 実際の `git status` |
 | タスクの消化状況 | **`tasks/*.md` のチェックボックス**(plan.md ではない) |
 | 気づき / 積み残し | 各段階の「気づき」欄を集約。**タスク側は `tasks/*.md` の「気づき」欄** |
@@ -51,11 +51,15 @@ build-verify を通っていない場合、**レポートを作る前に build-v
 - `verdict` — `完成` / `条件付き` / `未完` のいずれか。build-verify の判定をそのまま入れる
 - `acceptance[]` — `status` は `pass` / `warn` / `fail`。**`warn` を `pass` に丸めない**
 - `changes[]` — `why` に**なぜ変えたかを1行**。ここが空のレポートは価値が半減する。
-  スコープの状態は2つのキーで表す:
-  - 範囲宣言に当たる → `inScope: true`
-  - `auto_scope` で自動許可 → `inScope: false` かつ **`autoScope: true`**
-    (中立色の「自動許可」バッジ。違反ではない)
-  - どの範囲にも当たらない → `inScope: false` のみ(赤い「宣言外」バッジ)
+  - `task` — **`changes.md` のタスク見出しの番号**(`## 03: 未入力を弾く` なら `"03"`)。
+    複数のタスクで触ったファイルは `"01, 02"` のように並べる。
+    これで「受入条件 → 担当タスク → ファイル」が1本の鎖になり、
+    差し戻しのときに戻り先が引ける。**`changes.md` に見出しがあるのに省かない**
+  - スコープの状態は2つのキーで表す:
+    - 範囲宣言に当たる → `inScope: true`
+    - `auto_scope` で自動許可 → `inScope: false` かつ **`autoScope: true`**
+      (中立色の「自動許可」バッジ。違反ではない)
+    - どの範囲にも当たらない → `inScope: false` のみ(赤い「宣言外」バッジ)
 - `scope` — `declared[]` に範囲宣言(glob のまま)、`autoAllowed[]` に自動許可されたパス、
   `unexpected[]` に宣言外。**`autoAllowed` を `unexpected` に混ぜない。逆に、省略もしない**
 - `checks[]` — 実際に走らせたコマンドと exit code と出力。**捏造しない**

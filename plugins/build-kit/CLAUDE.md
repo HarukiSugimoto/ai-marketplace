@@ -77,6 +77,41 @@ grep -l "5原則(build-kit 共通)" plugins/build-kit/skills/*/SKILL.md   # 6 �
 grep -n "RED 書いた" plugins/build-kit/templates/plan.md
 ```
 
+### 2.6. 受入条件 → タスク → ファイルの鎖を切らない
+
+```
+受入条件 ──→ 担当タスク ──→ 触ったファイル
+ plan.md      plan.md の列      changes.md の見出し → report.json の task
+              tasks/*.md
+```
+
+**この鎖は3箇所に分散していて、どこか1つを消しても他は動き続ける。** だから腐る。
+
+- **`plan.md` の受入条件表から「担当タスク」列を消さない。** 列があることが唯一の強制で、
+  build-plan Step 3 末尾の空欄チェックとゲート2の項目3は、この列を前提にしている
+- **確認するのは受入条件 → タスクの片方向だけ。** 逆向き(タスク → 受入条件)を
+  必須にすると prefactoring が違反になる(振る舞いを変えないので受入条件を持たない)
+- **`changes.md` のタスク見出しを「ファイル一覧」に平坦化しない。**
+  見出しの番号がそのまま `report.json` の `changes[].task` になる
+- **`report.mjs` の task 列は、値が無いとき空欄ではなく `—` を出す。**
+  空欄にすると「記録されなかった」のか「そもそも列が無い」のか区別がつかない
+
+**空欄チェックは build-plan の中にしか無い**(機械的な検査は書けない —
+plan.md は PJ 側の成果物であって、この repo には存在しないため)。
+skill から消したら守りはゼロになる。
+
+確認:
+
+```
+# 受入条件表に担当タスク列があるか（雛形と skill の両方に出るのが正）
+grep -l "担当タスク" plugins/build-kit/templates/plan.md plugins/build-kit/skills/build-plan/SKILL.md
+
+# レポート側に task が通っているか（3ファイルすべてに出るのが正）
+grep -l "task" plugins/build-kit/scripts/report.mjs \
+  plugins/build-kit/templates/report.example.json \
+  plugins/build-kit/skills/build-report/SKILL.md
+```
+
 ### 2.7. スコープ判定は6段の順序。段を入れ替えない
 
 `build-run` Step 6 の表がスコープ判定の唯一の定義。`build-verify` Step 4 と

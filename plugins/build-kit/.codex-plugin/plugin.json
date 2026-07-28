@@ -1,6 +1,6 @@
 {
   "name": "build-kit",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "TDD 前提の段階型開発システム。設計→計画→実装→検証→レポートを5原則で型化し、最後に変更内容を HTML でプレビューする。",
   "author": {
     "name": "Haruki Sugimoto",
