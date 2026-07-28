@@ -141,8 +141,10 @@ const planTab = [
 const changesTable = changes.length ? `
 <div class="scroll"><table>
   <thead><tr><th>ファイル</th><th style="width:5rem">種別</th><th>なぜ変えたか</th></tr></thead>
-  <tbody>${changes.map((c) => `<tr${c.inScope === false ? ' class="flag"' : ""}>
-    <td class="mono small">${esc(c.path)}${c.inScope === false ? ' <span class="pill bad">宣言外</span>' : ""}</td>
+  <tbody>${changes.map((c) => `<tr${c.inScope === false && !c.autoScope ? ' class="flag"' : ""}>
+    <td class="mono small">${esc(c.path)}${
+      c.autoScope ? ' <span class="pill neutral">自動許可</span>'
+      : c.inScope === false ? ' <span class="pill bad">宣言外</span>' : ""}</td>
     <td class="small">${esc(KIND[c.kind] ?? c.kind ?? "")}</td>
     <td>${esc(c.why) || '<span class="empty">理由の記録なし</span>'}</td>
   </tr>`).join("")}</tbody>
@@ -202,11 +204,16 @@ const checksBlocks = checks.length ? checks.map((c) => `
   ${c.output ? `<pre class="out">${esc(c.output)}</pre>` : '<p class="empty pad">出力の記録なし</p>'}
 </details>`).join("") : "";
 
-const scopeBlock = (scope.declared?.length || scope.unexpected?.length) ? (
-  scope.unexpected?.length
+const autoAllowedBlock = scope.autoAllowed?.length
+  ? `<p class="small dim">auto_scope による自動許可が ${scope.autoAllowed.length} 件（違反ではない）</p>
+     <ul class="files">${scope.autoAllowed.map((s) => `<li class="mono small">${esc(s)}</li>`).join("")}</ul>`
+  : "";
+
+const scopeBlock = (scope.declared?.length || scope.unexpected?.length || scope.autoAllowed?.length) ? (
+  (scope.unexpected?.length
     ? `<p class="bad-text"><strong>宣言外の変更が ${scope.unexpected.length} 件あります（原則1の違反）</strong></p>
        <ul class="files bad-list">${scope.unexpected.map((s) => `<li class="mono small">${esc(s)}</li>`).join("")}</ul>`
-    : `<p class="ok-text">宣言どおり。宣言外に変わったファイルはありません。</p>`
+    : `<p class="ok-text">宣言どおり。宣言外に変わったファイルはありません。</p>`) + autoAllowedBlock
 ) : "";
 
 const verdictTab = [

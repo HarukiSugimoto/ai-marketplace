@@ -107,6 +107,7 @@ frontier としてまとめて1ラウンドで聞く(AskUserQuestion が使え�
 | `docs_dir` | 既存の docs 体系に合わせる / `docs/dev` を新設 / `.build-kit/docs` に隔離 |
 | `tdd_mode` | `strict`(全タスクで RED 先行) / `pragmatic`(理由明記で免除可) |
 | `protected_paths` | 既定(`.env*` / lockfile)に足すものがあるか |
+| `auto_scope` | 実装の副作用で必ず変わるもの(スナップショット / カバレッジ / 生成物)。**検出したものを提示して確認を取る。機能コードは入れない** |
 | レビュー | PJ 固有の `<見つけたもの>` を使う / build-kit の汎用 Standards 軸を使う / 両方 |
 
 **テストが1つも無かった場合は、ここで正直に言う:**

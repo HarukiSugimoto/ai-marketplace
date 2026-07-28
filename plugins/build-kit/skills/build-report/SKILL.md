@@ -51,7 +51,13 @@ build-verify を通っていない場合、**レポートを作る前に build-v
 - `verdict` — `完成` / `条件付き` / `未完` のいずれか。build-verify の判定をそのまま入れる
 - `acceptance[]` — `status` は `pass` / `warn` / `fail`。**`warn` を `pass` に丸めない**
 - `changes[]` — `why` に**なぜ変えたかを1行**。ここが空のレポートは価値が半減する。
-  宣言外のファイルは `inScope: false` にする(レポート上で赤く出る)
+  スコープの状態は2つのキーで表す:
+  - 範囲宣言に当たる → `inScope: true`
+  - `auto_scope` で自動許可 → `inScope: false` かつ **`autoScope: true`**
+    (中立色の「自動許可」バッジ。違反ではない)
+  - どの範囲にも当たらない → `inScope: false` のみ(赤い「宣言外」バッジ)
+- `scope` — `declared[]` に範囲宣言(glob のまま)、`autoAllowed[]` に自動許可されたパス、
+  `unexpected[]` に宣言外。**`autoAllowed` を `unexpected` に混ぜない。逆に、省略もしない**
 - `checks[]` — 実際に走らせたコマンドと exit code と出力。**捏造しない**
 - `notes[]` / `leftovers[]` — 空配列なら「無し」と表示される。無理に埋めない
 - `diff` — **`git diff` の生出力をそのまま文字列で入れる**(下記)

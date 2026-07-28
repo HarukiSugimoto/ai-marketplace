@@ -26,11 +26,15 @@
     { "path": "hooks/useForm.ts", "kind": "modified", "inScope": true,
       "why": "保存前に必須項目を検査する validate() を追加" },
     { "path": "__tests__/useForm.test.ts", "kind": "added", "inScope": true,
-      "why": "未入力・空白のみ・正常値の3ケースを固定" }
+      "why": "未入力・空白のみ・正常値の3ケースを固定" },
+    { "path": "__tests__/__snapshots__/useForm.snap", "kind": "modified",
+      "inScope": false, "autoScope": true,
+      "why": "(auto_scope) バリデーション追加に伴うスナップショット更新" }
   ],
 
   "scope": {
-    "declared": ["hooks/useForm.ts", "__tests__/useForm.test.ts"],
+    "declared": ["hooks/**", "__tests__/useForm.test.ts"],
+    "autoAllowed": ["__tests__/__snapshots__/useForm.snap"],
     "unexpected": []
   },
 
