@@ -28,11 +28,17 @@
 
 ## commit 規約
 
-コミットメッセージの末尾に必ず:
+コミットメッセージの末尾に必ず trailer を1行:
 
 ```
-Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+Co-Authored-By: Claude <モデル名> <noreply@anthropic.com>
 ```
+
+**モデル名は、そのコミットを実際に書いたモデルを書く。** 固定文字列ではない。
+2026-07 時点なら `Claude Opus 5`。過去のコミットに合わせて古い名前を書かない —
+どのモデルが書いたかが後から分かることが、この trailer の唯一の用途。
+
+履歴に `Opus 4.8` の commit が並んでいるのは、当時それで書いたから。遡って直さない。
 
 ## 収録プラグイン(型の1行サマリ)
 
